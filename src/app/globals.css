@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: url('/assets/wallpaperflare.com_wallpaper.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+  .centerItems{
+    @apply flex flex-col items-center justify-center;
+  }
+
+.centerItemsRow {
+  @apply flex flex-row items-center justify-center;
+}
+
+.inputDefaultStyle {
+  @apply bg-white/10 w-100 rounded-2xl h-10 text-center border-2 placeholder-white placeholder:opacity-70
+}
+
+.changeScaleOnHoverDefaultStyle {
+  @apply hover:scale-105 transition-transform duration-300
+}
