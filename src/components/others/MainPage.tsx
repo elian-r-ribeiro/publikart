@@ -1,16 +1,15 @@
 import Footer from "./Footer";
-import Middle from "./Middle";
 import SideBar from "./SideBar";
 
-export default function MainPage() {
+export default function MainPage(props: any) {
     return (
         <div className="h-screen flex flex-col justify-between">
-            <div className="flex h-screen">
+            <div className="flex flex-1 overflow-hidden">
                 <div className="backdrop-blur border-r border-zinc-700">
                     <SideBar />
                 </div>
-                <div className="flex-1 bg-amber-300">
-                    <Middle />
+                <div className="flex-1 backdrop-blur overflow-auto">
+                    <main className="h-full">{props.children}</main>
                 </div>
             </div>
             <Footer />
