@@ -8,7 +8,7 @@ export default function MainPage(props: any) {
                 <div className="backdrop-blur border-r border-zinc-700">
                     <SideBar />
                 </div>
-                <div className="flex-1 backdrop-blur overflow-auto">
+                <div className="flex-1 backdrop-blur overflow-auto p-5">
                     <main className="h-full">{props.children}</main>
                 </div>
             </div>
