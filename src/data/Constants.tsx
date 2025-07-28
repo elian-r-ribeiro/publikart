@@ -1,5 +1,6 @@
 import Artist from "./model/Artist";
 import Song from "./model/Song";
+import Album from "./model/Album";
 
 const songsList: Song[] = [
     { id: 1, title: "Song One", artist: "Artist A", imgUrl: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" },
@@ -87,5 +88,8 @@ const artistsList: Artist[] = [
     { id: 40, name: "Artist AN", profilePicture: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" }
 ]
 
+const albumsList: Album[] = [
+    { id: 1, name: "Album One", description: "Description of Album One", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", songs: songsList },
+]
 
-export { songsList, artistsList };
+export { songsList, artistsList, albumsList };

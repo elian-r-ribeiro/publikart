@@ -1,4 +1,4 @@
-import { IconPlayerPause, IconPlayerSkipBack, IconPlayerSkipBackFilled, IconPlayerSkipForward, IconPlayerSkipForwardFilled, IconRewindBackward10, IconRewindForward10 } from "@tabler/icons-react";
+import { IconPlayerPause, IconPlayerSkipBack, IconPlayerSkipForward, IconRewindBackward10, IconRewindForward10 } from "@tabler/icons-react";
 
 export default function MiniPlayer() {
     return (
@@ -12,7 +12,7 @@ export default function MiniPlayer() {
             </div>
             <div className="flex items-center gap-3">
                 <span>00:00</span>
-                    <input className="w-128" type="range"></input>
+                <input className="sm:w-64 md:w-96 lg:w-128" type="range"></input>
                 <span>03:24</span>
             </div>
         </div>
