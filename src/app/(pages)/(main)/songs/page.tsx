@@ -1,4 +1,4 @@
-import MiniMusicCard from "@/components/others/MiniMusicCard";
+import MiniMusicCard from "@/components/others/cards/MiniMusicCard";
 import { songsList } from "@/data/Constants";
 
 export default function Songs() {

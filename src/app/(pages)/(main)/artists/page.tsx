@@ -1,4 +1,4 @@
-import MiniArtistCard from "@/components/others/MiniArtistCard";
+import MiniArtistCard from "@/components/others/cards/MiniArtistCard";
 import { artistsList } from "@/data/Constants";
 
 export default function Artists() {

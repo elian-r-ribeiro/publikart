@@ -1,6 +1,7 @@
-import MiniMusicInfo from "./MiniMusicInfo";
-import MiniPlayer from "./MiniPlayer";
-import VolumeController from "./VolumeController";
+import MiniMusicInfo from "../mini/MiniMusicInfo";
+import MiniPlayer from "../mini/MiniPlayer";
+import VolumeController from "../mini/VolumeController";
+
 
 export default function Footer() {
     return (

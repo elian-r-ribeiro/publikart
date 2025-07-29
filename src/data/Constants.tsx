@@ -86,10 +86,14 @@ const artistsList: Artist[] = [
     { id: 38, name: "Artist AL", profilePicture: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" },
     { id: 39, name: "Artist AM", profilePicture: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" },
     { id: 40, name: "Artist AN", profilePicture: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" }
-]
+];
 
 const albumsList: Album[] = [
-    { id: 1, name: "Album One", description: "Description of Album One", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", songs: songsList },
-]
+    { id: 1, name: "Album One", description: "Description of Album One", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[1], songs: songsList },
+    { id: 2, name: "Album Two", description: "Description of Album Two", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[2], songs: songsList },
+    { id: 3, name: "Album Three", description: "Description of Album Three", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[3], songs: songsList },
+    { id: 4, name: "Album Four", description: "Description of Album Four", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[4], songs: songsList },
+    { id: 5, name: "Album Five", description: "Description of Album Five", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[5], songs: songsList }
+];
 
 export { songsList, artistsList, albumsList };

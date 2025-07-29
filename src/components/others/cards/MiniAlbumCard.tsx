@@ -13,7 +13,7 @@ export default function MiniAlbumCard(props: AlbumCardProps) {
             <div className="text-center">
                 <h2 className="text-lg font-semibold truncate overflow-hidden whitespace-nowrap">{props.album.name}</h2>
             </div>
-            <Link href={`/albums/${props.album.id}`} className="flex justify-center">
+            <Link href={`/publicAlbums/${props.album.id}`} className="flex justify-center">
                 <IconDots className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements" />
             </Link>
         </div>
