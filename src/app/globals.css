@@ -41,6 +41,10 @@ body {
   @apply bg-white/10 w-100 rounded-2xl h-10 text-center border-2 placeholder-white placeholder:opacity-70
 }
 
+.fileInputDefaultStyle {
+  @apply bg-white/10 w-100 rounded-2xl h-7 text-center border-2 placeholder-white placeholder:opacity-70 cursor-pointer
+}
+
 .changeScaleOnHoverDefaultStyle {
   @apply hover:scale-105 transition-transform duration-300
 }

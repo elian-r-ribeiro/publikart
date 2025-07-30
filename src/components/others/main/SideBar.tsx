@@ -1,4 +1,4 @@
-import { IconAlbum, IconFolder, IconMusic, IconPlaylist, IconPlaylistAdd, IconRadio, IconUsersGroup } from "@tabler/icons-react";
+import { IconAlbum, IconAlbumOff, IconBook, IconFolder, IconMusic, IconPlaylist, IconPlaylistAdd, IconPlaylistX, IconRadio, IconUsersGroup } from "@tabler/icons-react";
 import SideBarItem from "./SideBarItem";
 import SideBarLabel from "./SideBarLabel";
 import MiniUserProfile from "../mini/MiniUserProfile";
@@ -14,11 +14,11 @@ export default function SideBar() {
             <SideBarLabel label="Playlists" />
             <SideBarItem link="/publicPlaylists" iconName={IconPlaylist} text="Playlists Públicas" />
             <SideBarItem link="/savedPlaylists" iconName={IconPlaylistAdd} text="Playlists Salvas" />
-            <SideBarItem link="/myPlaylists" iconName={IconPlaylistAdd} text="Minhas Playlists" />
+            <SideBarItem link="/myPlaylists" iconName={IconPlaylistX} text="Minhas Playlists" />
             <SideBarLabel label="Álbuns" />
             <SideBarItem link="/publicAlbums" iconName={IconAlbum} text="Álbuns Públicos" />
-            <SideBarItem link="/savedAlbums" iconName={IconAlbum} text="Álbuns Salvos" />
-            <SideBarItem link="/myAlbums" iconName={IconAlbum} text="Meus Álbuns" />
+            <SideBarItem link="/savedAlbums" iconName={IconBook} text="Álbuns Salvos" />
+            <SideBarItem link="/myAlbums" iconName={IconAlbumOff} text="Meus Álbuns" />
             <SideBarLabel label="Outros" />
             <SideBarItem link="radio" iconName={IconRadio} text="Rádio" />
         </nav>
