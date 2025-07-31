@@ -1,7 +1,7 @@
 export default function SavedPlaylists() {
     return (
         <div>
-            <span>Saved Playlists</span>
+            <span>Your saved playlists will appear here.</span>
         </div>
     );
 }

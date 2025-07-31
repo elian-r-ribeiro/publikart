@@ -1,6 +1,7 @@
 import Artist from "./model/Artist";
 import Song from "./model/Song";
 import Album from "./model/Album";
+import Playlist from "./model/Playlist";
 
 const songsList: Song[] = [
     { id: 1, title: "Song One", artist: "Artist A", imgUrl: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" },
@@ -96,4 +97,12 @@ const albumsList: Album[] = [
     { id: 5, name: "Album Five", description: "Description of Album Five", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[5], songs: songsList }
 ];
 
-export { songsList, artistsList, albumsList };
+const playlistsList: Playlist[] = [
+    { id: 1, name: "Top Hits", description: "The most popular songs right now.", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[0], songs: songsList },
+    { id: 2, name: "Chill Vibes", description: "Relax and unwind with these chill tracks.", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[1], songs: songsList },
+    { id: 3, name: "Workout Mix", description: "Get pumped with energetic songs.", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[2], songs: songsList },
+    { id: 4, name: "Throwback", description: "Classic hits from the past.", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[3], songs: songsList.slice(24, 32) },
+    { id: 5, name: "Party Time", description: "Songs to get the party started.", image: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg", artist: artistsList[4], songs: songsList.slice(32, 40) },
+];
+
+export { songsList, artistsList, albumsList, playlistsList };
