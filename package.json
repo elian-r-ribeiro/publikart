@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@tabler/icons-react": "^3.34.0",
+    "firebase": "^12.0.0",
     "next": "15.3.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.61.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
