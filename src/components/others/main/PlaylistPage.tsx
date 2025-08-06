@@ -1,6 +1,6 @@
 import MiniMusicCard from "../cards/MiniMusicCard";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
-import Playlist from "@/data/model/Playlist";
+import Playlist from "@/model/Playlist";
 
 interface PlaylistPageProps {
     playlist?: Playlist;

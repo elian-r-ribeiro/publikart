@@ -1,4 +1,4 @@
-import Album from "@/data/model/Album";
+import Album from "@/model/Album";
 import MiniMusicCard from "../cards/MiniMusicCard";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 

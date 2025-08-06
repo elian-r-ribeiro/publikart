@@ -1,4 +1,4 @@
-import Album from "@/data/model/Album";
+import Album from "@/model/Album";
 import { IconDots } from "@tabler/icons-react";
 import Link from "next/link";
 

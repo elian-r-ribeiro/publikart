@@ -1,14 +1,19 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db, storage } from "../../../firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { auth, db, storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
+
+const login = async (email: string, password: string): Promise<UserCredential> => {
+    const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+    return userCredentials;
+}
 
 const handleRegister = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<void> => {
 
     try {
         const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredentials.user;
-        const uid = user.uid;
+        const registeredUser = userCredentials.user;
+        const uid = registeredUser.uid;
         let imageURL = "";
         if (profilePicture && profilePicture.length > 0) {
             imageURL = await handleProfilePictureRegister(uid, profilePicture[0]);
@@ -51,4 +56,4 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, email:
     }
 }
 
-export { handleRegister };
+export { handleRegister, login };

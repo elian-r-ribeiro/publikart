@@ -1,7 +1,7 @@
-import Artist from "./model/Artist";
-import Song from "./model/Song";
-import Album from "./model/Album";
-import Playlist from "./model/Playlist";
+import Artist from "../model/Artist";
+import Song from "../model/Song";
+import Album from "../model/Album";
+import Playlist from "../model/Playlist";
 
 const songsList: Song[] = [
     { id: 1, title: "Song One", artist: "Artist A", imgUrl: "https://static6.depositphotos.com/1003369/659/i/450/depositphotos_6591667-stock-photo-close-up-of-beautiful-womanish.jpg" },

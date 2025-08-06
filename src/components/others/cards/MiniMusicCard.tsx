@@ -1,4 +1,4 @@
-import Song from "@/data/model/Song";
+import Song from "@/model/Song";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 
 interface MiniMusicCardProps {

@@ -1,6 +1,6 @@
 'use client';
 
-import { handleRegister } from "@/data/services/RegisterFormService";
+import { handleRegister } from "@/services/authService";
 import Link from "next/link";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -53,11 +53,15 @@ export default function RegisterForm() {
                             type="file"
                             accept="image/*"
                             className="hidden"
+                            {...register("profilePicture", {
+                                required: "A foto de perfil é obrigatória"
+                            })}
                             onChange={(e) => {
                                 handleImageChange(e);
                                 setProfilePicture(e.target.files);
                             }}
                         />
+                        {errors.profilePicture && <p>{errors.profilePicture.message}</p>}
 
                         <input type="text"
                             className="inputDefaultStyle changeScaleOnHoverDefaultStyle"

@@ -1,4 +1,4 @@
-import Playlist from "@/data/model/Playlist";
+import Playlist from "@/model/Playlist";
 import { IconDots } from "@tabler/icons-react";
 import Link from "next/link";
 
