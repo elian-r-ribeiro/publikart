@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
 import { auth, db, storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 
 const login = async (email: string, password: string): Promise<UserCredential> => {
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
@@ -50,7 +50,7 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, email:
             imageURL: imageURL
         }
 
-        await addDoc(collection(db, "users"), userData);
+        await setDoc(doc(db, "users", uid), userData);
     } catch (error) {
         console.log(error);
     }
