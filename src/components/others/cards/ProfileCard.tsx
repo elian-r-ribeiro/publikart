@@ -1,16 +1,23 @@
+'use client'
+
+import { getLoggedUserInfo } from "@/services/authService";
+import Image from "next/image";
+
 export default function ProfileCard() {
 
     const isCompositor = true;
 
+    const loggedUserData = getLoggedUserInfo();
+
     return (
         <div className="centerItems">
             <div className="bg-zinc-700/20 w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
-                <img className="rounded-full h-32 w-32"
-                    src="https://images.scalebranding.com/skull-wolf-logo-da286447-5c6d-4e6b-84a2-05a8acf94436.jpg"
+                <Image className="rounded-full" width={128} height={128}
+                    src={loggedUserData?.imageURL || "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg"}
                     alt="Profile Image" />
                 <input type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"
-                    placeholder="Nome de Usuário" defaultValue={"Elian \"Lobo\" Ribeiro"} />
+                    placeholder="Nome de Usuário" defaultValue={loggedUserData?.userName} />
                 <div className="flex flex-col gap-2">
                     <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Enviar Música</button>
                     <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Criar Playlist</button>

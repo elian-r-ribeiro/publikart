@@ -1,7 +1,35 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
 import { auth, db, storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
+function getLoggedUserInfo() {
+    const [loggedUserData, setLoggedUserData] = useState<any>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            console.log("Fui chamado");
+            if (user) {
+                try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        setLoggedUserData(userDoc.data());
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar usuário:", error);
+                }
+            } else {
+                setLoggedUserData(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    return loggedUserData;
+}
 
 const login = async (email: string, password: string): Promise<UserCredential> => {
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
@@ -56,4 +84,4 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, email:
     }
 }
 
-export { handleRegister, login };
+export { handleRegister, login, getLoggedUserInfo };

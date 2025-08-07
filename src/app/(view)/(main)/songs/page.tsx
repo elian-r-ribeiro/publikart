@@ -1,7 +1,10 @@
+'use client'
+
 import MiniMusicCard from "@/components/others/cards/MiniMusicCard";
 import { songsList } from "@/data/Constants";
 
 export default function Songs() {
+
     return (
         <div className="flex justify-center">
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
