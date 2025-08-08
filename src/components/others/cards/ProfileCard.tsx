@@ -1,19 +1,19 @@
 'use client'
 
-import { getLoggedUserInfo } from "@/services/authService";
+import { getLoggedUserInfoHook } from "@/services/AuthService";
 import Image from "next/image";
 
 export default function ProfileCard() {
 
     const isCompositor = true;
 
-    const loggedUserData = getLoggedUserInfo();
+    const loggedUserData = getLoggedUserInfoHook();
 
     return (
         <div className="centerItems">
             <div className="bg-zinc-700/20 w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
                 <Image className="rounded-full" width={128} height={128}
-                    src={loggedUserData?.imageURL || "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg"}
+                    src={loggedUserData?.profilePictureURL || "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg"}
                     alt="Profile Image" />
                 <input type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"

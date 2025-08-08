@@ -3,9 +3,11 @@ import { auth, db, storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import User from "@/model/User";
 
-function getLoggedUserInfo() {
-    const [loggedUserData, setLoggedUserData] = useState<any>(null);
+function getLoggedUserInfoHook() {
+
+    const [loggedUserDataFromHook, setLoggedUserDataFromHook] = useState<any>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -15,20 +17,20 @@ function getLoggedUserInfo() {
                     const userDocRef = doc(db, "users", user.uid);
                     const userDoc = await getDoc(userDocRef);
                     if (userDoc.exists()) {
-                        setLoggedUserData(userDoc.data());
+                        setLoggedUserDataFromHook(userDoc.data());
                     }
                 } catch (error) {
                     console.error("Erro ao buscar usuário:", error);
                 }
             } else {
-                setLoggedUserData(null);
+                setLoggedUserDataFromHook(null);
             }
         });
 
         return () => unsubscribe();
     }, []);
 
-    return loggedUserData;
+    return loggedUserDataFromHook;
 }
 
 const login = async (email: string, password: string): Promise<UserCredential> => {
@@ -42,11 +44,11 @@ const handleRegister = async (email: string, password: string, userName: string,
         const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
         const registeredUser = userCredentials.user;
         const uid = registeredUser.uid;
-        let imageURL = "";
+        let profilePictureUrl = "";
         if (profilePicture && profilePicture.length > 0) {
-            imageURL = await handleProfilePictureRegister(uid, profilePicture[0]);
+            profilePictureUrl = await handleProfilePictureRegister(uid, profilePicture[0]);
         }
-        await handleFirestoreDataRegister(uid, userName, email, imageURL);
+        await handleFirestoreDataRegister(uid, userName, profilePictureUrl);
     } catch (error) {
         console.log("Erro ao registrar: " + error);
     }
@@ -69,13 +71,15 @@ const handleProfilePictureRegister = async (uid: string, profileImage: File): Pr
     }
 }
 
-const handleFirestoreDataRegister = async (uid: string, userName: string, email: string, imageURL: string): Promise<void> => {
+const handleFirestoreDataRegister = async (uid: string, userName: string, profilePictureURL: string): Promise<void> => {
     try {
-        const userData = {
+        const userData: Partial<User> = {
             uid: uid,
             userName: userName,
-            email: email,
-            imageURL: imageURL
+            profilePictureURL: profilePictureURL,
+            savedAlbums: [],
+            userPlaylists: [],
+            savedPlaylists: []
         }
 
         await setDoc(doc(db, "users", uid), userData);
@@ -84,4 +88,4 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, email:
     }
 }
 
-export { handleRegister, login, getLoggedUserInfo };
+export { handleRegister, login, getLoggedUserInfoHook };

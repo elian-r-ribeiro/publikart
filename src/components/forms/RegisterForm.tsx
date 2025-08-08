@@ -1,6 +1,6 @@
 'use client';
 
-import { handleRegister } from "@/services/authService";
+import { handleRegister } from "@/services/AuthService";
 import Link from "next/link";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";

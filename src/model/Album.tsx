@@ -1,4 +1,4 @@
-import Artist from "./Artist";
+import Artist from "./User";
 import Song from "./Song";
 
 export default interface Album {

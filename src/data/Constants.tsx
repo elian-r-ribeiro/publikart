@@ -1,4 +1,4 @@
-import Artist from "../model/Artist";
+import Artist from "../model/User";
 import Song from "../model/Song";
 import Album from "../model/Album";
 import Playlist from "../model/Playlist";

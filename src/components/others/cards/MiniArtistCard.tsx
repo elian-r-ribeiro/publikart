@@ -1,4 +1,4 @@
-import Artist from "@/model/Artist";
+import Artist from "@/model/User";
 import { IconDots } from "@tabler/icons-react";
 
 interface MiniArtistCardProps {
