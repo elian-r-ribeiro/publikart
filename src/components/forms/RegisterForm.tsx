@@ -2,6 +2,7 @@
 
 import { handleRegister } from "@/services/AuthService";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -19,12 +20,14 @@ export default function RegisterForm() {
     const [profilePicture, setProfilePicture] = useState<FileList | null>(null);
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
-    const onSubmit: SubmitHandler<FormValues> = data => {
-        handleRegister(data.email, data.password, data.userName, profilePicture);
-    };
 
+    const router = useRouter();
     const password = watch("password");
 
+    const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        await handleRegister(data.email, data.password, data.userName, profilePicture);
+        router.push("/login/selectPreferences");
+    };
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {

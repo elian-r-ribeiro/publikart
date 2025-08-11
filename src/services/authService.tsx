@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
 import { auth, db, storage } from "../../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
 
@@ -49,6 +49,7 @@ const handleRegister = async (email: string, password: string, userName: string,
             profilePictureUrl = await handleProfilePictureRegister(uid, profilePicture[0]);
         }
         await handleFirestoreDataRegister(uid, userName, profilePictureUrl);
+        await login(email, password);
     } catch (error) {
         console.log("Erro ao registrar: " + error);
     }
@@ -79,7 +80,8 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, profil
             profilePictureURL: profilePictureURL,
             savedAlbums: [],
             userPlaylists: [],
-            savedPlaylists: []
+            savedPlaylists: [],
+            isArtist: false
         }
 
         await setDoc(doc(db, "users", uid), userData);
@@ -88,4 +90,11 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, profil
     }
 }
 
-export { handleRegister, login, getLoggedUserInfoHook };
+const changeUserPreferenceOption = async (uid: string) => {
+    const loggedUserDocRef = doc(db, "users", uid);
+    await updateDoc(loggedUserDocRef, {
+        isArtist: true
+    });
+}
+
+export { handleRegister, login, getLoggedUserInfoHook, changeUserPreferenceOption };
