@@ -1,17 +1,15 @@
 'use client';
 
 import { getLoggedUserInfoHook } from "@/services/AuthService";
-// import { checkIfLoggedUserSelectedPreference } from "@/services/FirebaseService";
 import Image from "next/image";
-import { useEffect } from "react";
 
 export default function MiniUserProfile() {
 
     const loggedUserData = getLoggedUserInfoHook();
 
-    useEffect(() => {
-        // checkIfLoggedUserSelectedPreference();
-    })
+    if (!loggedUserData) {
+        return <div>Carregando...</div>
+    }
 
     return (
         <div className="flex items-center mt-5 gap-3 changeScaleOnHoverDefaultStyle cursor-pointer" onClick={() => window.location.href = "/profile"}>
