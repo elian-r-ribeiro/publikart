@@ -22,11 +22,18 @@ export default function ProfileCard() {
                 <input type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"
                     placeholder="Nome de Usuário" defaultValue={loggedUserData.userName} />
-                <div className="flex flex-col gap-2">
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Enviar Música</button>
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Criar Playlist</button>
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Criar Álbum</button>
-                </div>
+                {isCompositor ?
+                    <div className="flex flex-col gap-2">
+                        <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Enviar Música</button>
+                        <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Criar Playlist</button>
+                        <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Criar Álbum</button>
+                    </div>
+                    :
+                    <div>
+
+                    </div>
+                }
+
                 <div className="changeScaleOnHoverDefaultStyle flex items-center gap-2">
                     <input type="checkbox"
                         defaultChecked={isCompositor}
