@@ -4,6 +4,7 @@ import { login } from "@/services/AuthService";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import DefaultMusicComponent from "../others/main/DefaultMusicComponent";
 
 export default function LoginForm() {
 
@@ -27,7 +28,7 @@ export default function LoginForm() {
 
     return (
         <div className="centerItems h-screen">
-            <div className="bg-zinc-700/20 w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
+            <div className="bg-zinc-700/20 w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur z-1">
                 <h1 className="text-2xl font-black mb-4">Login</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="centerItems gap-7">
                     <input type="email"
@@ -55,6 +56,9 @@ export default function LoginForm() {
                 <Link href="/register" className="cursor-pointer changeScaleOnHoverDefaultStyle">
                     <span>Não tem uma conta? Registre aqui</span>
                 </Link>
+            </div>
+            <div className="flex justify-end items-end absolute h-screen w-screen p-6 z-0">
+                <DefaultMusicComponent />
             </div>
         </div>
     );
