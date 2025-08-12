@@ -5,6 +5,11 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
 
+const updateUserProfile = async (uid: string, userName: string, isArtist: boolean) => {
+    const loggedUserDocRef = doc(db, "users", uid);
+    await updateDoc(loggedUserDocRef, { userName: userName, isArtist: isArtist });
+}
+
 function getLoggedUserInfoHook() {
 
     const [loggedUserDataFromHook, setLoggedUserDataFromHook] = useState<any>(null);
@@ -97,4 +102,4 @@ const changeUserPreferenceOption = async (uid: string) => {
     });
 }
 
-export { handleRegister, login, getLoggedUserInfoHook, changeUserPreferenceOption };
+export { handleRegister, login, getLoggedUserInfoHook, changeUserPreferenceOption, updateUserProfile };
