@@ -16,7 +16,6 @@ function getLoggedUserInfoHook() {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            console.log("Fui chamado");
             if (user) {
                 try {
                     const userDocRef = doc(db, "users", user.uid);
