@@ -1,4 +1,4 @@
-import MiniPlaylistCard from "@/components/others/cards/MiniPlaylistCard";
+import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
 import { playlistsList } from "@/data/Constants";
 
 export default function PublicPlaylists() {

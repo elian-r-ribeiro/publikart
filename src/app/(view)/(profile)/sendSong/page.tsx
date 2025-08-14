@@ -1,5 +1,5 @@
-import MiniMusicCard from "@/components/others/cards/MiniMusicCard";
-import MiniMusicCardForm from "@/components/others/cards/MiniMusicCardForm";
+import MiniMusicCard from "@/components/cards/MiniMusicCard";
+import MiniMusicCardForm from "@/components/cards/MiniMusicCardForm";
 
 export default function SendSong() {
     return (

@@ -1,6 +1,6 @@
 'use client'
 
-import MiniMusicCard from "@/components/others/cards/MiniMusicCard";
+import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import { songsList } from "@/data/Constants";
 
 export default function Songs() {

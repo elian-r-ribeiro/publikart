@@ -1,4 +1,4 @@
-import MiniAlbumCard from "@/components/others/cards/MiniAlbumCard";
+import MiniAlbumCard from "@/components/cards/MiniAlbumCard";
 import { albumsList } from "@/data/Constants";
 
 export default function PublicAlbums() {

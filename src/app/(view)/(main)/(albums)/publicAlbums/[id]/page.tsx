@@ -1,6 +1,6 @@
 'use client'
 
-import MiniMusicCard from "@/components/others/cards/MiniMusicCard";
+import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import AlbumPage from "@/components/others/main/AlbumPage";
 import { albumsList } from "@/data/Constants";
 import { useParams } from "next/navigation";
