@@ -1,9 +1,23 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
 import { auth, db, storage } from "../../firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
+
+const updateUserProfileWithProfilePicture = async (uid: string, userName: string, isArtist: boolean, profilePicture: File) => {
+    await updateUserProfile(uid, userName, isArtist);
+
+    const profilePictureRef: StorageReference = ref(storage, `profilePictures/${uid}`);
+
+    await deleteObject(profilePictureRef);
+    await uploadBytes(profilePictureRef, profilePicture);
+
+    const imageURL = await getDownloadURL(profilePictureRef);
+    const loggedUserDocRef = doc(db, "users", uid);
+
+    await updateDoc(loggedUserDocRef, { profilePictureURL: imageURL });
+}
 
 const updateUserProfile = async (uid: string, userName: string, isArtist: boolean) => {
     const loggedUserDocRef = doc(db, "users", uid);
@@ -63,7 +77,7 @@ const handleRegister = async (email: string, password: string, userName: string,
 const handleProfilePictureRegister = async (uid: string, profileImage: File): Promise<string> => {
 
     try {
-        const imageRef = ref(storage, `profileImages/${uid}`);
+        const imageRef = ref(storage, `profilePictures/${uid}`);
 
         await uploadBytes(imageRef, profileImage);
 
@@ -101,4 +115,4 @@ const changeUserPreferenceOption = async (uid: string) => {
     });
 }
 
-export { handleRegister, login, getLoggedUserInfoHook, changeUserPreferenceOption, updateUserProfile };
+export { handleRegister, login, getLoggedUserInfoHook, changeUserPreferenceOption, updateUserProfile, updateUserProfileWithProfilePicture };

@@ -12,7 +12,7 @@ export default function DefaultMusicComponent() {
         if (!songRef.current) {
             const defaultSongURL = await getDefaultSongURL();
             songRef.current = new Audio(defaultSongURL);
-            songRef.current.loop = true; // opcional, se quiser que a música repita
+            songRef.current.loop = true;
         }
 
         if (isPlaying) {

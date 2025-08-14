@@ -1,19 +1,23 @@
 'use client'
 
-import { getLoggedUserInfoHook, updateUserProfile } from "@/services/AuthService";
+import { getLoggedUserInfoHook, updateUserProfile, updateUserProfileWithProfilePicture } from "@/services/AuthService";
 import Image from "next/image";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function ProfileCard() {
 
-    const loggedUserData = getLoggedUserInfoHook();
-
     type FormValues = {
         userName: string,
-        isArtist: boolean
+        isArtist: boolean,
+        profilePicture: FileList
     }
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
+
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [profilePicture, setProfilePicture] = useState<FileList | null>(null);
+    const loggedUserData = getLoggedUserInfoHook();
 
     if (!loggedUserData) {
         return <div>Carregando...</div>;
@@ -22,16 +26,46 @@ export default function ProfileCard() {
     const isArtist = loggedUserData.isArtist;
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await updateUserProfile(loggedUserData.uid, data.userName, data.isArtist);
+        if (profilePicture) {
+            await updateUserProfileWithProfilePicture(loggedUserData.uid, data.userName, data.isArtist, profilePicture[0]!);
+        } else {
+            await updateUserProfile(loggedUserData.uid, data.userName, data.isArtist);
+        }
         window.location.reload();
     }
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setImageSrc(imageUrl);
+        }
+    };
 
     return (
         <div className="centerItems">
             <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
-                <Image className="rounded-full" width={128} height={128}
-                    src={loggedUserData.profilePictureURL || "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg"}
-                    alt="Profile Image" />
+                <label htmlFor="fileInput" className="cursor-pointer">
+                    <Image
+                        src={imageSrc || loggedUserData.profilePictureURL}
+                        alt="Profile Picture"
+                        height={128}
+                        width={128}
+                        className="w-32 h-32 object-cover border-2 border-gray-300 rounded-full"
+                    />
+                </label>
+
+                <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    {...register("profilePicture")}
+                    onChange={(e) => {
+                        handleImageChange(e);
+                        setProfilePicture(e.target.files);
+                    }}
+                />
                 <input type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"
                     placeholder="Nome de Usuário" defaultValue={loggedUserData.userName}
