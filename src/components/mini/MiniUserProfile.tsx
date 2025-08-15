@@ -1,11 +1,12 @@
 'use client';
 
+import User from "@/model/User";
 import { getLoggedUserInfoHook } from "@/services/AuthService";
 import Image from "next/image";
 
 export default function MiniUserProfile() {
 
-    const loggedUserData = getLoggedUserInfoHook();
+    const loggedUserData: User = getLoggedUserInfoHook();
 
     if (!loggedUserData) {
         return <div>Carregando...</div>

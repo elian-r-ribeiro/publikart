@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, UserCredential } from "firebase/auth";
 import { auth, db, storage } from "../../firebase";
 import { deleteObject, getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -54,6 +54,10 @@ function getLoggedUserInfoHook() {
 const login = async (email: string, password: string): Promise<UserCredential> => {
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
     return userCredentials;
+}
+
+const logoutFromFirebase = async () => {
+    signOut(auth);
 }
 
 const handleRegister = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<void> => {
@@ -115,4 +119,12 @@ const changeUserPreferenceOption = async (uid: string) => {
     });
 }
 
-export { handleRegister, login, getLoggedUserInfoHook, changeUserPreferenceOption, updateUserProfile, updateUserProfileWithProfilePicture };
+export {
+    handleRegister,
+    login,
+    getLoggedUserInfoHook,
+    changeUserPreferenceOption,
+    updateUserProfile,
+    updateUserProfileWithProfilePicture,
+    logoutFromFirebase
+};

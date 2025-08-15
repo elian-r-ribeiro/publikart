@@ -57,6 +57,10 @@ body {
   @apply grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5
 }
 
+.gridOfExplorePage {
+  @apply grid-cols-1 md:grid-cols-2
+}
+
 @keyframes visualizer1 {
     0% { height: 20%; }
     50% { height: 100%; }

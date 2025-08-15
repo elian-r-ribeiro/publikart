@@ -1,11 +1,13 @@
 'use client'
 
-import { getLoggedUserInfoHook, updateUserProfile, updateUserProfileWithProfilePicture } from "@/services/AuthService";
+import { getLoggedUserInfoHook, updateUserProfile, updateUserProfileWithProfilePicture, logoutFromFirebase } from "@/services/AuthService";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ArtistProfileButtons from "../others/ArtistProfileButtons";
 import ProfileCardImageInput from "../others/ProfileCardImageInput";
-import IsArtistProfileCardInput from "../others/isArtistProfileCardInput";
+import IsArtistProfileCardInput from "../others/IsArtistProfileCardInput";
+import { useRouter } from "next/navigation";
+import User from "../../model/User";
 
 export default function ProfileCard() {
 
@@ -16,10 +18,10 @@ export default function ProfileCard() {
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
-
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [profilePicture, setProfilePicture] = useState<FileList | null>(null);
-    const loggedUserData = getLoggedUserInfoHook();
+    const loggedUserData: User = getLoggedUserInfoHook();
+    const router = useRouter();
 
     if (!loggedUserData) {
         return <div>Carregando...</div>;
@@ -34,6 +36,11 @@ export default function ProfileCard() {
             await updateUserProfile(loggedUserData.uid, data.userName, data.isArtist);
         }
         window.location.reload();
+    }
+
+    const logout = async () => {
+        logoutFromFirebase();
+        router.push("/login");
     }
 
     return (
@@ -60,7 +67,9 @@ export default function ProfileCard() {
 
                 <div className="centerItems gap-2">
                     <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Salvar</button>
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Logout</button>
+                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black"
+                        onClick={logout}
+                    >Logout</button>
                 </div>
             </form>
         </div>

@@ -1,4 +1,4 @@
-import MainPage from "@/components/others/main/MainPage";
+import MainPage from "@/components/main/MainPage";
 
 export default function Layout(props: any) {
     return (
