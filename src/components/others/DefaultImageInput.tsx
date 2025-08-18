@@ -2,15 +2,15 @@ import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 import { UseFormRegister } from "react-hook-form";
 
-interface ProfileCardImageInputProps {
+interface DefaultImageInputProps {
     imageSrc: string;
-    profilePictureURL: string;
-    register: UseFormRegister<any>;
-    setProfilePicture: React.Dispatch<React.SetStateAction<FileList | null>>;
     setImageSrc: Dispatch<SetStateAction<string | null>>
+    defaultImageURL?: string;
+    register: UseFormRegister<any>;
+    isRequired: boolean;
 }
 
-export default function ProfileCardImageInput(props: ProfileCardImageInputProps) {
+export default function DefaultImageInput(props: DefaultImageInputProps) {
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -24,8 +24,8 @@ export default function ProfileCardImageInput(props: ProfileCardImageInputProps)
         <div>
             <label htmlFor="fileInput" className="cursor-pointer">
                 <Image
-                    src={props.imageSrc || props.profilePictureURL}
-                    alt="Profile Picture"
+                    src={props.imageSrc || props.defaultImageURL || 'https://t3.ftcdn.net/jpg/02/70/09/98/360_F_270099822_9zbx236dHn1hyxYNl9HSOBvpUEpU0eOz.jpg'}
+                    alt="Image"
                     height={128}
                     width={128}
                     className="w-32 h-32 object-cover border-2 border-gray-300 rounded-full"
@@ -37,12 +37,14 @@ export default function ProfileCardImageInput(props: ProfileCardImageInputProps)
                 type="file"
                 accept="image/*"
                 className="hidden"
-                {...props.register("profilePicture")}
-                onChange={(e) => {
-                    handleImageChange(e);
-                    props.setProfilePicture(e.target.files);
-                }}
+                {...props.register("imageInput", {
+                    required: props.isRequired ? "A imagem é obrigatória" : false,
+                    onChange: (e) => {
+                        handleImageChange(e);
+                    }
+                })}
             />
+
         </div>
     );
 }

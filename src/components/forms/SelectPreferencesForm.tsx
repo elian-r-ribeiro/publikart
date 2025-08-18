@@ -1,7 +1,7 @@
 'use client'
 
 import { IconBook, IconBrush, IconMusic, IconUser } from "@tabler/icons-react";
-import PreferenceOption from "../others/main/PreferenceOption";
+import PreferenceOption from "../main/PreferenceOption";
 import { changeUserPreferenceOption, getLoggedUserInfoHook } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import DefaultImageInput from "../others/DefaultImageInput";
 
 export default function RegisterForm() {
 
@@ -13,11 +14,10 @@ export default function RegisterForm() {
         email: string;
         password: string;
         confirmPassword: string;
-        profilePicture: FileList;
+        imageInput: FileList;
     };
 
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const [profilePicture, setProfilePicture] = useState<FileList | null>(null);
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
 
@@ -25,15 +25,8 @@ export default function RegisterForm() {
     const password = watch("password");
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await handleRegister(data.email, data.password, data.userName, profilePicture);
+        await handleRegister(data.email, data.password, data.userName, data.imageInput);
         router.push("/login/selectPreferences");
-    };
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setImageSrc(imageUrl);
-        }
     };
 
     return (
@@ -43,28 +36,13 @@ export default function RegisterForm() {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="centerItems gap-4">
 
-                        <label htmlFor="fileInput" className="cursor-pointer">
-                            <img
-                                src={imageSrc || 'https://t3.ftcdn.net/jpg/02/70/09/98/360_F_270099822_9zbx236dHn1hyxYNl9HSOBvpUEpU0eOz.jpg'}
-                                alt="Camera"
-                                className="w-32 h-32 object-cover border-2 border-gray-300 rounded-full"
-                            />
-                        </label>
-
-                        <input
-                            id="fileInput"
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            {...register("profilePicture", {
-                                required: "A foto de perfil é obrigatória"
-                            })}
-                            onChange={(e) => {
-                                handleImageChange(e);
-                                setProfilePicture(e.target.files);
-                            }}
-                        />
-                        {errors.profilePicture && <p>{errors.profilePicture.message}</p>}
+                        <DefaultImageInput
+                            imageSrc={imageSrc || ""}
+                            setImageSrc={setImageSrc}
+                            register={register}
+                            isRequired={true}
+                        ></DefaultImageInput>
+                        {errors.imageInput && <p>{errors.imageInput.message}</p>}
 
                         <input type="text"
                             className="inputDefaultStyle changeScaleOnHoverDefaultStyle"

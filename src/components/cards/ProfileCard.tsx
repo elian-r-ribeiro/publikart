@@ -4,7 +4,7 @@ import { getLoggedUserInfoHook, updateUserProfile, updateUserProfileWithProfileP
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ArtistProfileButtons from "../others/ArtistProfileButtons";
-import ProfileCardImageInput from "../others/ProfileCardImageInput";
+import DefaultImageInput from "../others/DefaultImageInput";
 import IsArtistProfileCardInput from "../others/IsArtistProfileCardInput";
 import { useRouter } from "next/navigation";
 import User from "../../model/User";
@@ -14,12 +14,11 @@ export default function ProfileCard() {
     type FormValues = {
         userName: string,
         isArtist: boolean,
-        profilePicture: FileList
+        imageInput: FileList
     }
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const [profilePicture, setProfilePicture] = useState<FileList | null>(null);
     const loggedUserData: User = getLoggedUserInfoHook();
     const router = useRouter();
 
@@ -30,8 +29,9 @@ export default function ProfileCard() {
     const isArtist = loggedUserData.isArtist;
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        if (profilePicture) {
-            await updateUserProfileWithProfilePicture(loggedUserData.uid, data.userName, data.isArtist, profilePicture[0]!);
+        console.log("Aboa");
+        if (data.imageInput != null) {
+            await updateUserProfileWithProfilePicture(loggedUserData.uid, data.userName, data.isArtist, data.imageInput[0]!);
         } else {
             await updateUserProfile(loggedUserData.uid, data.userName, data.isArtist);
         }
@@ -46,12 +46,12 @@ export default function ProfileCard() {
     return (
         <div className="centerItems">
             <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-110 h-150 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
-                <ProfileCardImageInput
+                <DefaultImageInput
                     imageSrc={imageSrc ?? ""}
-                    profilePictureURL={loggedUserData.profilePictureURL}
+                    defaultImageURL={loggedUserData.profilePictureURL}
                     register={register}
                     setImageSrc={setImageSrc}
-                    setProfilePicture={setProfilePicture}
+                    isRequired={false}
                 />
 
                 <input type="text"
