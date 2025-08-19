@@ -21,24 +21,24 @@ export default function SongForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-3 min-h-32 bg-zinc-700/40 rounded-lg p-4 backdrop-blur">
-            <DefaultImageInput
-                imageSrc={imageSrc || ""}
-                setImageSrc={setImageSrc}
-                register={register}
-                isRequired={true}
-            />
-            {errors.imageInput && <p>{errors.imageInput.message}</p>}
-            <div className="flex flex-col gap-3 text-center">
+        <div className="bg-zinc-700/20 w-110 h-80 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-3 text-center">
+                <DefaultImageInput
+                    imageSrc={imageSrc || ""}
+                    setImageSrc={setImageSrc}
+                    register={register}
+                    isRequired={true}
+                />
+                {errors.imageInput && <p>{errors.imageInput.message}</p>}
                 <input type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"
                     placeholder="Título da sua linda música" />
                 <div className="flex flex-col gap-2">
                     <p className="text-zinc-400 truncate overflow-hidden whitespace-nowrap">Elian "Lobo" Ribeiro</p>
                 </div>
-            </div>
-            <input type="file" className="fileInputDefaultStyle changeScaleOnHoverDefaultStyle" />
-            <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Enviar música</button>
-        </form>
+                <input type="file" className="fileInputDefaultStyle changeScaleOnHoverDefaultStyle" />
+                <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Enviar música</button>
+            </form>
+        </div>
     );
 }

@@ -83,7 +83,7 @@ const handleProfilePictureRegister = async (uid: string, profileImage: File): Pr
     try {
         const imageRef = ref(storage, `profilePictures/${uid}`);
 
-        await uploadBytes(imageRef, profileImage);
+        await uploadBytes(imageRef, profileImage, { contentType: 'image/jpeg' });
 
         const imageURL = await getDownloadURL(imageRef);
 
