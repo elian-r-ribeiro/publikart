@@ -24,8 +24,7 @@ export default function SongForm() {
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        // await sendSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songInput[0], data.imageInput[0]);
-        await getAllSongs();
+        await sendSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songInput[0], data.imageInput[0]);
     };
 
     return (

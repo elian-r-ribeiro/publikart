@@ -11,9 +11,15 @@ const getDefaultSongURL = async () => {
 
 const getAllSongs = async () => {
     const songsDocsRef = await getDocs(collection(db, "songs"));
-    const songs = songsDocsRef.docs.map(doc => ({
-        ...doc.data()
-    }));
+    const songs: Song[] = songsDocsRef.docs.map(doc => {
+        const data = doc.data();
+        return {
+            title: data.title,
+            artistUid: data.artistUid,
+            imgUrl: data.imgUrl
+        } as Song;
+    });
+    
     return songs;
 }
 
