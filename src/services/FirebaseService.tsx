@@ -46,9 +46,4 @@ const handleSongImageSending = async (imageFile: File, fileName: string): Promis
     }
 }
 
-// const sendSongImage = async (image: File) => {
-//     const songImagesStorageRef: StorageReference = ref()
-//     uploadBytes()
-// }
-
 export { getDefaultSongURL, sendSongToFirebase, getAllSongs }
