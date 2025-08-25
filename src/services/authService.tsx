@@ -6,22 +6,30 @@ import { useEffect, useState } from "react";
 import User from "@/model/User";
 
 const updateUserProfileWithProfilePicture = async (uid: string, userName: string, isArtist: boolean, profilePicture: File) => {
-    await updateUserProfile(uid, userName, isArtist);
+    try {
+        await updateUserProfile(uid, userName, isArtist);
 
-    const profilePictureRef: StorageReference = ref(storage, `profilePictures/${uid}`);
+        const profilePictureRef: StorageReference = ref(storage, `profilePictures/${uid}`);
 
-    await deleteObject(profilePictureRef);
-    await uploadBytes(profilePictureRef, profilePicture);
+        await deleteObject(profilePictureRef);
+        await uploadBytes(profilePictureRef, profilePicture);
 
-    const imageURL = await getDownloadURL(profilePictureRef);
-    const loggedUserDocRef = doc(db, "users", uid);
+        const imageURL = await getDownloadURL(profilePictureRef);
+        const loggedUserDocRef = doc(db, "users", uid);
 
-    await updateDoc(loggedUserDocRef, { profilePictureURL: imageURL });
+        await updateDoc(loggedUserDocRef, { profilePictureURL: imageURL });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const updateUserProfile = async (uid: string, userName: string, isArtist: boolean) => {
-    const loggedUserDocRef = doc(db, "users", uid);
-    await updateDoc(loggedUserDocRef, { userName: userName, isArtist: isArtist });
+    try {
+        const loggedUserDocRef = doc(db, "users", uid);
+        await updateDoc(loggedUserDocRef, { userName: userName, isArtist: isArtist });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function getLoggedUserInfoHook() {
@@ -38,7 +46,7 @@ function getLoggedUserInfoHook() {
                         setLoggedUserDataFromHook(userDoc.data());
                     }
                 } catch (error) {
-                    console.error("Erro ao buscar usuário:", error);
+                    console.error(error);
                 }
             } else {
                 setLoggedUserDataFromHook(null);
@@ -51,13 +59,20 @@ function getLoggedUserInfoHook() {
     return loggedUserDataFromHook;
 }
 
-const login = async (email: string, password: string): Promise<UserCredential> => {
-    const userCredentials = await signInWithEmailAndPassword(auth, email, password);
-    return userCredentials;
+const login = async (email: string, password: string): Promise<void> => {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const logoutFromFirebase = async () => {
-    signOut(auth);
+    try {
+        signOut(auth);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const handleRegister = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<void> => {
@@ -113,10 +128,14 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, profil
 }
 
 const changeUserPreferenceOption = async (uid: string) => {
-    const loggedUserDocRef = doc(db, "users", uid);
-    await updateDoc(loggedUserDocRef, {
-        isArtist: true
-    });
+    try {
+        const loggedUserDocRef = doc(db, "users", uid);
+        await updateDoc(loggedUserDocRef, {
+            isArtist: true
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export {

@@ -1,6 +1,5 @@
 export default interface Song {
-    id: number;
     title: string;
-    artist: string;
+    artistUid: string;
     imgUrl: string;
 };
