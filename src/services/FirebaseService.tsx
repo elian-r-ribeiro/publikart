@@ -1,6 +1,6 @@
 import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase";
-import { addDoc, collection, doc, DocumentData, DocumentReference, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, DocumentData, DocumentReference, getDocs, updateDoc } from "firebase/firestore";
 import Song from "@/model/Song";
 
 const getDefaultSongURL = async () => {
@@ -23,7 +23,7 @@ const getAllSongs = async () => {
     return songs;
 }
 
-const sendSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
+const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
     try {
         const songData: Partial<Song> = {
             title: songTitle,
@@ -31,8 +31,8 @@ const sendSongToFirebase = async (songTitle: string, uid: string, songFile: File
         }
 
         const createdDocumentReference: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
-        const imageSendingTask = await handleFileSendingToFirebase(songImage, `songsImages/${createdDocumentReference.id}`)
-        const imageDownloadURL = await getFileDownloadURLByRef(imageSendingTask!);
+        const imageUploadTaskWithRef = await handleFileUploadToFirebase(songImage, `songsImages/${createdDocumentReference.id}`)
+        const imageDownloadURL = await getFileDownloadURLByRef(imageUploadTaskWithRef!);
 
         await updateDoc(createdDocumentReference, { imgUrl: imageDownloadURL });
     } catch (error) {
@@ -40,7 +40,7 @@ const sendSongToFirebase = async (songTitle: string, uid: string, songFile: File
     }
 }
 
-const handleFileSendingToFirebase = async (file: File, pathWithFileName: string): Promise<StorageReference | undefined> => {
+const handleFileUploadToFirebase = async (file: File, pathWithFileName: string): Promise<StorageReference | undefined> => {
     try {
         const fileRef: StorageReference = ref(storage, pathWithFileName);
 
@@ -62,4 +62,4 @@ const getFileDownloadURLByRef = async (ref: StorageReference): Promise<string> =
     }
 }
 
-export { getDefaultSongURL, sendSongToFirebase, getAllSongs, handleFileSendingToFirebase, getFileDownloadURLByRef }
+export { getDefaultSongURL, uploadSongToFirebase, getAllSongs, handleFileUploadToFirebase, getFileDownloadURLByRef }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getLoggedUserInfoHook } from "@/services/AuthService";
-import { getAllSongs, sendSongToFirebase } from "@/services/FirebaseService";
+import { uploadSongToFirebase } from "@/services/FirebaseService";
 
 type FormValues = {
     songTitle: string;
@@ -24,7 +24,7 @@ export default function SongForm() {
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await sendSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
+        await uploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
     };
 
     return (

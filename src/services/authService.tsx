@@ -4,7 +4,7 @@ import { deleteObject, getDownloadURL, ref, StorageReference, uploadBytes } from
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
-import { getFileDownloadURLByRef, handleFileSendingToFirebase } from "./FirebaseService";
+import { getFileDownloadURLByRef, handleFileUploadToFirebase } from "./FirebaseService";
 
 const updateUserProfileWithProfilePicture = async (uid: string, userName: string, isArtist: boolean, profilePicture: File) => {
     try {
@@ -14,7 +14,7 @@ const updateUserProfileWithProfilePicture = async (uid: string, userName: string
 
         await deleteObject(profilePictureRefToDelete);
 
-        const profilePicutreUploadTaskWithRef = await handleFileSendingToFirebase(profilePicture, `profilePictures/${uid}`);
+        const profilePicutreUploadTaskWithRef = await handleFileUploadToFirebase(profilePicture, `profilePictures/${uid}`);
         const profilePictureDownloadURL = await getFileDownloadURLByRef(profilePicutreUploadTaskWithRef!);
         const loggedUserDocRef = doc(db, "users", uid);
 
@@ -82,7 +82,7 @@ const handleRegister = async (email: string, password: string, userName: string,
         const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
         const registeredUser = userCredentials.user;
         const uid = registeredUser.uid;
-        const profilePictureRef = await handleFileSendingToFirebase(profilePicture![0], `profilePictures/${uid}`);
+        const profilePictureRef = await handleFileUploadToFirebase(profilePicture![0], `profilePictures/${uid}`);
         const profilePictureUrl = await getFileDownloadURLByRef(profilePictureRef!);
 
         await handleFirestoreDataRegister(uid, userName, profilePictureUrl);
