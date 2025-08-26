@@ -29,7 +29,6 @@ export default function ProfileCard() {
     const isArtist = loggedUserData.isArtist;
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        console.log("Aboa");
         if (data.imageInput != null) {
             await updateUserProfileWithProfilePicture(loggedUserData.uid, data.userName, data.isArtist, data.imageInput[0]!);
         } else {

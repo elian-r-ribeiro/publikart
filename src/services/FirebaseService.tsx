@@ -19,7 +19,7 @@ const getAllSongs = async () => {
             imgUrl: data.imgUrl
         } as Song;
     });
-    
+
     return songs;
 }
 
@@ -31,7 +31,8 @@ const sendSongToFirebase = async (songTitle: string, uid: string, songFile: File
         }
 
         const createdDocumentReference: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
-        const imageDownloadURL = await handleSongImageSending(songImage, createdDocumentReference.id);
+        const imageSendingTask = await handleFileSendingToFirebase(songImage, `songsImages/${createdDocumentReference.id}`)
+        const imageDownloadURL = await getFileDownloadURLByRef(imageSendingTask!);
 
         await updateDoc(createdDocumentReference, { imgUrl: imageDownloadURL });
     } catch (error) {
@@ -39,17 +40,26 @@ const sendSongToFirebase = async (songTitle: string, uid: string, songFile: File
     }
 }
 
-const handleSongImageSending = async (imageFile: File, fileName: string): Promise<string> => {
+const handleFileSendingToFirebase = async (file: File, pathWithFileName: string): Promise<StorageReference | undefined> => {
     try {
-        const songImageRef: StorageReference = ref(storage, `songsImages/${fileName}`);
+        const fileRef: StorageReference = ref(storage, pathWithFileName);
 
-        await uploadBytes(songImageRef, imageFile);
+        await uploadBytes(fileRef, file);
 
-        return getDownloadURL(songImageRef);
+        return fileRef;
+    } catch (error) {
+        console.log(error);
+        return undefined;
+    }
+}
+
+const getFileDownloadURLByRef = async (ref: StorageReference): Promise<string> => {
+    try {
+        return await getDownloadURL(ref);
     } catch (error) {
         console.log(error);
         return ("erro");
     }
 }
 
-export { getDefaultSongURL, sendSongToFirebase, getAllSongs }
+export { getDefaultSongURL, sendSongToFirebase, getAllSongs, handleFileSendingToFirebase, getFileDownloadURLByRef }

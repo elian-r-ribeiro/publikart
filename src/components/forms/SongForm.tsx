@@ -9,7 +9,7 @@ import { getAllSongs, sendSongToFirebase } from "@/services/FirebaseService";
 type FormValues = {
     songTitle: string;
     imageInput: FileList;
-    songInput: FileList;
+    songFile: FileList;
 };
 
 export default function SongForm() {
@@ -24,7 +24,7 @@ export default function SongForm() {
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await sendSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songInput[0], data.imageInput[0]);
+        await sendSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
     };
 
     return (
@@ -52,9 +52,9 @@ export default function SongForm() {
                 <input
                     type="file"
                     className="fileInputDefaultStyle changeScaleOnHoverDefaultStyle"
-                    {...register("songInput", { required: "O arquivo da música é obrigatório" })}
+                    {...register("songFile", { required: "O arquivo da música é obrigatório" })}
                 />
-                {errors.songInput && <p>{errors.songInput.message}</p>}
+                {errors.songFile && <p>{errors.songFile.message}</p>}
 
                 <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Enviar música</button>
             </form>

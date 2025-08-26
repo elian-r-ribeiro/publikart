@@ -11,7 +11,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
             <img src={props.song.imgUrl} alt="Song image" className="w-full h-32 object-cover rounded-md mb-2" />
             <div className="text-center">
                 <h2 className="text-lg font-semibold truncate overflow-hidden whitespace-nowrap">{props.song.title}</h2>
-                <p className="text-zinc-400 truncate overflow-hidden whitespace-nowrap">{props.song.artist}</p>
+                {/* <p className="text-zinc-400 truncate overflow-hidden whitespace-nowrap">{props.song.artist}</p> */}
             </div>
             <div className="flex justify-center">
                 <IconPlayerPlay className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"></IconPlayerPlay>

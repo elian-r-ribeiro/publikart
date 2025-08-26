@@ -4,20 +4,21 @@ import { deleteObject, getDownloadURL, ref, StorageReference, uploadBytes } from
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
+import { getFileDownloadURLByRef, handleFileSendingToFirebase } from "./FirebaseService";
 
 const updateUserProfileWithProfilePicture = async (uid: string, userName: string, isArtist: boolean, profilePicture: File) => {
     try {
         await updateUserProfile(uid, userName, isArtist);
 
-        const profilePictureRef: StorageReference = ref(storage, `profilePictures/${uid}`);
+        const profilePictureRefToDelete: StorageReference = ref(storage, `profilePictures/${uid}`);
 
-        await deleteObject(profilePictureRef);
-        await uploadBytes(profilePictureRef, profilePicture);
+        await deleteObject(profilePictureRefToDelete);
 
-        const imageURL = await getDownloadURL(profilePictureRef);
+        const profilePicutreUploadTaskWithRef = await handleFileSendingToFirebase(profilePicture, `profilePictures/${uid}`);
+        const profilePictureDownloadURL = await getFileDownloadURLByRef(profilePicutreUploadTaskWithRef!);
         const loggedUserDocRef = doc(db, "users", uid);
 
-        await updateDoc(loggedUserDocRef, { profilePictureURL: imageURL });
+        await updateDoc(loggedUserDocRef, { profilePictureURL: profilePictureDownloadURL });
     } catch (error) {
         console.log(error);
     }
@@ -81,32 +82,15 @@ const handleRegister = async (email: string, password: string, userName: string,
         const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
         const registeredUser = userCredentials.user;
         const uid = registeredUser.uid;
-        let profilePictureUrl = "";
-        if (profilePicture && profilePicture.length > 0) {
-            profilePictureUrl = await handleProfilePictureRegister(uid, profilePicture[0]);
-        }
+        const profilePictureRef = await handleFileSendingToFirebase(profilePicture![0], `profilePictures/${uid}`);
+        const profilePictureUrl = await getFileDownloadURLByRef(profilePictureRef!);
+
         await handleFirestoreDataRegister(uid, userName, profilePictureUrl);
         await login(email, password);
     } catch (error) {
         console.log("Erro ao registrar: " + error);
     }
 
-}
-
-const handleProfilePictureRegister = async (uid: string, profileImage: File): Promise<string> => {
-
-    try {
-        const imageRef = ref(storage, `profilePictures/${uid}`);
-
-        await uploadBytes(imageRef, profileImage, { contentType: 'image/jpeg' });
-
-        const imageURL = await getDownloadURL(imageRef);
-
-        return imageURL;
-    } catch (error) {
-        console.log(error);
-        return "erro";
-    }
 }
 
 const handleFirestoreDataRegister = async (uid: string, userName: string, profilePictureURL: string): Promise<void> => {
