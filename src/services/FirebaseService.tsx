@@ -16,7 +16,8 @@ const getAllSongs = async () => {
         return {
             title: data.title,
             artistUid: data.artistUid,
-            imgUrl: data.imgUrl
+            imgUrl: data.imgUrl,
+            songUrl: data.songUrl
         } as Song;
     });
 
@@ -31,10 +32,13 @@ const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: Fi
         }
 
         const createdDocumentReference: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
-        const imageUploadTaskWithRef = await handleFileUploadToFirebase(songImage, `songsImages/${createdDocumentReference.id}`)
+        const imageUploadTaskWithRef = await handleFileUploadToFirebase(songImage, `songsImages/${createdDocumentReference.id}`);
         const imageDownloadURL = await getFileDownloadURLByRef(imageUploadTaskWithRef!);
 
-        await updateDoc(createdDocumentReference, { imgUrl: imageDownloadURL });
+        const songFileUploadTaskWithRef = await handleFileUploadToFirebase(songFile, `songs/${createdDocumentReference.id}`);
+        const songFileDownloadURL = await getFileDownloadURLByRef(songFileUploadTaskWithRef!);
+
+        await updateDoc(createdDocumentReference, { imgUrl: imageDownloadURL, songUrl: songFileDownloadURL });
     } catch (error) {
         console.log(error);
     }

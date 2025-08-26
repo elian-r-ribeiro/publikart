@@ -3,7 +3,7 @@
 import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import Song from "@/model/Song";
 import { getAllSongs } from "@/services/FirebaseService";
-import { useState, useEffect, Key } from "react";
+import { useState, useEffect } from "react";
 
 export default function Songs() {
     const [allSongsFromFirebase, setAllSongsFromFirebase] = useState<Song[] | null>(null);
