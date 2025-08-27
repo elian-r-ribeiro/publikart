@@ -3,8 +3,9 @@
 import { useState } from "react";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { getLoggedUserInfoHook } from "@/services/AuthService";
 import { uploadSongToFirebase } from "@/services/FirebaseService";
+import { useCurrentUser } from "@/context/UserContext";
+import User from "@/model/User";
 
 type FormValues = {
     songTitle: string;
@@ -17,7 +18,7 @@ export default function SongForm() {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
 
-    const loggedUserInfo = getLoggedUserInfoHook();
+    const loggedUserInfo: User | null = useCurrentUser();
 
     if (!loggedUserInfo) {
         return <p>Carregando...</p>
