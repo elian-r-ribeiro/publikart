@@ -3,10 +3,10 @@ import { db, storage } from "../../firebase";
 import { addDoc, collection, DocumentData, DocumentReference, getDocs, updateDoc } from "firebase/firestore";
 import Song from "@/model/Song";
 
-const getDefaultSongURL = async () => {
-    const defaultSongRef: StorageReference = ref(storage, "defaultSongs/DefaultSong.mp3");
-    const defaultSongURL: string = await getDownloadURL(defaultSongRef);
-    return defaultSongURL;
+const getSongByLoggedUserID = async (uid: string) => {
+    const songsDocsRef = await getDocs(collection(db, "songs"));
+    const userSongs = songsDocsRef.docs.filter(doc => doc.data().artistUid === uid);
+    return userSongs.map(doc => ({ ...doc.data() })) as Song[];
 }
 
 const getAllSongs = async () => {
@@ -66,4 +66,17 @@ const getFileDownloadURLByRef = async (ref: StorageReference): Promise<string> =
     }
 }
 
-export { getDefaultSongURL, uploadSongToFirebase, getAllSongs, handleFileUploadToFirebase, getFileDownloadURLByRef }
+const getDefaultSongURL = async () => {
+    const defaultSongRef: StorageReference = ref(storage, "defaultSongs/DefaultSong.mp3");
+    const defaultSongURL: string = await getDownloadURL(defaultSongRef);
+    return defaultSongURL;
+}
+
+export {
+    getDefaultSongURL,
+    uploadSongToFirebase,
+    getAllSongs,
+    handleFileUploadToFirebase,
+    getFileDownloadURLByRef,
+    getSongByLoggedUserID
+}
