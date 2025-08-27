@@ -8,6 +8,7 @@ import DefaultImageInput from "../others/DefaultImageInput";
 import IsArtistProfileCardInput from "../others/IsArtistProfileCardInput";
 import { useRouter } from "next/navigation";
 import User from "../../model/User";
+import { useCurrentUser } from "@/context/UserContext";
 
 export default function ProfileCard() {
 
@@ -19,7 +20,7 @@ export default function ProfileCard() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const loggedUserData: User = getLoggedUserInfoHook();
+    const loggedUserData: User | null = useCurrentUser();
     const router = useRouter();
 
     if (!loggedUserData) {
