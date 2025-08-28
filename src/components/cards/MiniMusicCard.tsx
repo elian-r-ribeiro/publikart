@@ -1,11 +1,14 @@
 'use client'
 
 import Song from "@/model/Song";
+import User from "@/model/User";
+import { saveSongToFavorites } from "@/services/FirebaseService";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useRef } from "react";
 
 interface MiniMusicCardProps {
     song: Song;
+    loggedUser: User;
 };
 
 export default function MiniMusicCard(props: MiniMusicCardProps) {
@@ -19,8 +22,12 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
         songRef.current.play();
     }
 
+    async function handleSongSaving() {
+        await saveSongToFavorites(props.song.id, props.loggedUser.uid);
+    }
+
     return (
-        <div className="min-h-32 bg-zinc-700/40 rounded-lg p-4 backdrop-blur changeScaleOnHoverDefaultStyle">
+        <div className="min-h-55 min-w-45 max-h-55 max-w-45 bg-zinc-700/40 rounded-lg p-4 backdrop-blur changeScaleOnHoverDefaultStyle">
             <img src={props.song.imgUrl} alt="Song image" className="w-full h-32 object-cover rounded-md mb-2" />
             <div className="text-center">
                 <h2 className="text-lg font-semibold truncate overflow-hidden whitespace-nowrap">{props.song.title}</h2>
@@ -28,7 +35,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
             </div>
             <div className="flex justify-center">
                 <IconPlayerPlay onClick={handleSongPlayAndPause} className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"></IconPlayerPlay>
-                <IconPlus className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"></IconPlus>
+                <IconPlus onClick={handleSongSaving} className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"></IconPlus>
             </div>
         </div>
     );

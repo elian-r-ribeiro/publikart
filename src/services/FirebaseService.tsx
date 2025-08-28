@@ -1,27 +1,53 @@
 import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase";
-import { addDoc, collection, DocumentData, DocumentReference, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import Song from "@/model/Song";
 
-const getSongByLoggedUserID = async (uid: string) => {
-    const songsDocsRef = await getDocs(collection(db, "songs"));
-    const userSongs = songsDocsRef.docs.filter(doc => doc.data().artistUid === uid);
-    return userSongs.map(doc => ({ ...doc.data() })) as Song[];
+const saveSongToFavorites = async (songId: string, uid: string) => {
+    try {
+        console.log("Olá")
+        const userDocRef = doc(db, "users", uid);
+        await updateDoc(userDocRef, {
+            savedSongs: arrayUnion(songId)
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const getLoggedUserSongsByDocIds = async (userSongsDocIds: string[]) => {
+    const userSongs: Song[] = [];
+
+    try {
+        await Promise.all(userSongsDocIds.map(async (songId: string) => {
+            const songDocRef = doc(db, "songs", songId);
+            const songDoc = await getDoc(songDocRef);
+            if (songDoc.exists()) {
+                userSongs.push({ ...songDoc.data() } as Song);
+            }
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+
+    return userSongs as Song[];
 }
 
 const getAllSongs = async () => {
-    const songsDocsRef = await getDocs(collection(db, "songs"));
-    const songs: Song[] = songsDocsRef.docs.map(doc => {
-        const data = doc.data();
-        return {
-            title: data.title,
-            artistUid: data.artistUid,
-            imgUrl: data.imgUrl,
-            songUrl: data.songUrl
-        } as Song;
-    });
+    const allSongs: Song[] = [];
 
-    return songs;
+    try {
+        const songsDocsRef = await getDocs(collection(db, "songs"));
+
+        await Promise.all(songsDocsRef.docs.map(async (doc) => {
+            const data = doc.data();
+            allSongs.push({ ...data } as Song);
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+
+    return allSongs;
 }
 
 const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
@@ -31,20 +57,21 @@ const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: Fi
             artistUid: uid
         }
 
-        const createdDocumentReference: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
-        const imageUploadTaskWithRef = await handleFileUploadToFirebase(songImage, `songsImages/${createdDocumentReference.id}`);
-        const imageDownloadURL = await getFileDownloadURLByRef(imageUploadTaskWithRef!);
+        const userDocRef: DocumentReference = doc(db, "users", uid);
+        const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
+        const imageUploadTaskWithRef = await uploadFileToFirebase(songImage, `songsImages/${createdDocumentRef.id}`);
+        const imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
+        const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${createdDocumentRef.id}`);
+        const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
 
-        const songFileUploadTaskWithRef = await handleFileUploadToFirebase(songFile, `songs/${createdDocumentReference.id}`);
-        const songFileDownloadURL = await getFileDownloadURLByRef(songFileUploadTaskWithRef!);
-
-        await updateDoc(createdDocumentReference, { imgUrl: imageDownloadURL, songUrl: songFileDownloadURL });
+        await updateDoc(createdDocumentRef, { id: createdDocumentRef.id, imgUrl: imageDownloadURL, songUrl: songFileDownloadURL });
+        await updateDoc(userDocRef, { userSongs: arrayUnion(createdDocumentRef.id) });
     } catch (error) {
         console.log(error);
     }
 }
 
-const handleFileUploadToFirebase = async (file: File, pathWithFileName: string): Promise<StorageReference | undefined> => {
+const uploadFileToFirebase = async (file: File, pathWithFileName: string): Promise<StorageReference | undefined> => {
     try {
         const fileRef: StorageReference = ref(storage, pathWithFileName);
 
@@ -57,7 +84,7 @@ const handleFileUploadToFirebase = async (file: File, pathWithFileName: string):
     }
 }
 
-const getFileDownloadURLByRef = async (ref: StorageReference): Promise<string> => {
+const getDownloadURLByRef = async (ref: StorageReference): Promise<string> => {
     try {
         return await getDownloadURL(ref);
     } catch (error) {
@@ -76,7 +103,8 @@ export {
     getDefaultSongURL,
     uploadSongToFirebase,
     getAllSongs,
-    handleFileUploadToFirebase,
-    getFileDownloadURLByRef,
-    getSongByLoggedUserID
+    uploadFileToFirebase,
+    getDownloadURLByRef,
+    getLoggedUserSongsByDocIds,
+    saveSongToFavorites
 }
