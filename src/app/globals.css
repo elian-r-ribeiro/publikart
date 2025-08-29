@@ -61,6 +61,10 @@ body {
   @apply grid-cols-1 md:grid-cols-2
 }
 
+.defaultCardsSize {
+  @apply min-h-55 min-w-45 max-h-55 max-w-45
+}
+
 @keyframes visualizer1 {
     0% { height: 20%; }
     50% { height: 100%; }

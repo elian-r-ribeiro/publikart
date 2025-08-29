@@ -1,14 +1,14 @@
 'use client'
 
-import { getLoggedUserInfoHook, updateUserProfile, updateUserProfileWithProfilePicture, logoutFromFirebase } from "@/services/AuthService";
+import { updateUserProfile, updateUserProfileWithProfilePicture, logoutFromFirebase } from "@/services/AuthService";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ArtistProfileButtons from "../others/ArtistProfileButtons";
 import DefaultImageInput from "../others/DefaultImageInput";
-import IsArtistProfileCardInput from "../others/IsArtistProfileCardInput";
 import { useRouter } from "next/navigation";
 import User from "../../model/User";
 import { useCurrentUser } from "@/context/UserContext";
+import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 
 export default function ProfileCard() {
 
@@ -30,7 +30,7 @@ export default function ProfileCard() {
     const isArtist = loggedUserData.isArtist;
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        if (data.imageInput != null) {
+        if (data.imageInput && data.imageInput.length > 0) {
             await updateUserProfileWithProfilePicture(loggedUserData.uid, data.userName, data.isArtist, data.imageInput[0]!);
         } else {
             await updateUserProfile(loggedUserData.uid, data.userName, data.isArtist);
@@ -63,7 +63,7 @@ export default function ProfileCard() {
 
                 {isArtist ? <ArtistProfileButtons /> : <div></div>}
 
-                <IsArtistProfileCardInput isArtistDefaultChecked={isArtist} register={register} />
+                <DefaultCheckboxInput defaultChecked={isArtist} register={register} registerName="isArtist" inputText="Sou compositor" />
 
                 <div className="centerItems gap-2">
                     <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Salvar</button>

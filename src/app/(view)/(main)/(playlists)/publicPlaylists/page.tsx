@@ -1,11 +1,27 @@
+'use client'
+
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
-import { playlistsList } from "@/data/Constants";
+import Playlist from "@/model/Playlist";
+import { getAllNonPrivatePlaylists } from "@/services/FirebaseService";
+import { useEffect, useState } from "react";
 
 export default function PublicPlaylists() {
+
+    const [playlists, setPlaylists] = useState<Playlist[]>([]);
+
+    useEffect(() => {
+        const fetchPlaylists = async () => {
+            const nonPrivatePlaylists = await getAllNonPrivatePlaylists();
+            setPlaylists(nonPrivatePlaylists);
+        };
+
+        fetchPlaylists();
+    }, []);
+
     return (
         <div className="flex justify-center">
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
-                {playlistsList.map(playlist => (
+                {playlists.map(playlist => (
                     <MiniPlaylistCard key={playlist.id} playlist={playlist} />
                 ))}
             </div>

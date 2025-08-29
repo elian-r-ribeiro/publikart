@@ -1,11 +1,9 @@
-import Artist from "./User";
-import Song from "./Song";
-
 export default interface Playlist {
-    id: number;
-    name: string;
-    description?: string;
-    image: string;
-    artist: Artist;
-    songs: Song[];
+    id: string;
+    playlistTitle: string;
+    playlistDescription?: string;
+    imgUrl: string;
+    artistUid: string;
+    songsIds: string[];
+    isPrivate: boolean;
 };

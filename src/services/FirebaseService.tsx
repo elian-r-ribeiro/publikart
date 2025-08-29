@@ -2,10 +2,10 @@ import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/sto
 import { db, storage } from "../../firebase";
 import { addDoc, arrayUnion, collection, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import Song from "@/model/Song";
+import Playlist from "@/model/Playlist";
 
 const saveSongToFavorites = async (songId: string, uid: string) => {
     try {
-        console.log("Olá")
         const userDocRef = doc(db, "users", uid);
         await updateDoc(userDocRef, {
             savedSongs: arrayUnion(songId)
@@ -33,6 +33,25 @@ const getLoggedUserSongsByDocIds = async (userSongsDocIds: string[]) => {
     return userSongs as Song[];
 }
 
+const getAllNonPrivatePlaylists = async () => {
+    const nonPrivatePlaylists: Playlist[] = [];
+
+    try {
+        const playlistsDocsRef = await getDocs(collection(db, "playlists"));
+
+        await Promise.all(playlistsDocsRef.docs.map(async (doc) => {
+            const data = doc.data();
+            if (!data.isPrivate) {
+                nonPrivatePlaylists.push({ ...data } as Playlist);
+            }
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+
+    return nonPrivatePlaylists;
+}
+
 const getAllSongs = async () => {
     const allSongs: Song[] = [];
 
@@ -50,9 +69,33 @@ const getAllSongs = async () => {
     return allSongs;
 }
 
+const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string) => {
+    try {
+        let playlistData: Partial<Playlist> = {
+            artistUid: uid,
+            playlistTitle: playlistTitle,
+            playlistDescription: playlistDescription || "",
+            isPrivate: isPrivate
+        };
+
+        const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "playlists"), playlistData);
+        const imageUploadTaskWithRef = await uploadFileToFirebase(imageFile, `playlistsImages/${createdDocumentRef.id}`);
+        const imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
+
+        playlistData = {
+            id: createdDocumentRef.id,
+            imgUrl: imageDownloadURL
+        }
+
+        await updateDoc(createdDocumentRef, playlistData);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
     try {
-        const songData: Partial<Song> = {
+        let songData: Partial<Song> = {
             title: songTitle,
             artistUid: uid
         }
@@ -64,7 +107,13 @@ const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: Fi
         const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${createdDocumentRef.id}`);
         const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
 
-        await updateDoc(createdDocumentRef, { id: createdDocumentRef.id, imgUrl: imageDownloadURL, songUrl: songFileDownloadURL });
+        songData = {
+            id: createdDocumentRef.id,
+            imgUrl: imageDownloadURL,
+            songUrl: songFileDownloadURL
+        };
+
+        await updateDoc(createdDocumentRef, songData);
         await updateDoc(userDocRef, { userSongs: arrayUnion(createdDocumentRef.id) });
     } catch (error) {
         console.log(error);
@@ -106,5 +155,7 @@ export {
     uploadFileToFirebase,
     getDownloadURLByRef,
     getLoggedUserSongsByDocIds,
-    saveSongToFavorites
+    saveSongToFavorites,
+    createPlaylist,
+    getAllNonPrivatePlaylists
 }
