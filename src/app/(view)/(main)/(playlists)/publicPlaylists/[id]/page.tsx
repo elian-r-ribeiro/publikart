@@ -1,6 +1,6 @@
 'use client'
 
-import PlaylistPage from "@/components/others/main/PlaylistPage";
+import PlaylistPage from "@/components/main/PlaylistPage";
 import { playlistsList } from "@/data/Constants";
 import { useParams } from "next/navigation";
 

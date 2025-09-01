@@ -99,8 +99,8 @@ const handleFirestoreDataRegister = async (uid: string, userName: string, profil
             uid: uid,
             userName: userName,
             profilePictureURL: profilePictureURL,
-            savedSongs: [],
             savedAlbums: [],
+            userAlbums: [],
             userPlaylists: [],
             savedPlaylists: [],
             isArtist: false

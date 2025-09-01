@@ -1,4 +1,4 @@
-import MiniMusicCard from "../../cards/MiniMusicCard";
+import MiniMusicCard from "../cards/MiniMusicCard";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import Playlist from "@/model/Playlist";
 

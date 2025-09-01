@@ -4,11 +4,11 @@ import { addDoc, arrayUnion, collection, doc, DocumentData, DocumentReference, g
 import Song from "@/model/Song";
 import Playlist from "@/model/Playlist";
 
-const saveSongToFavorites = async (songId: string, uid: string) => {
+const saveSongToPlaylist = async (songId: string, playlistId: string) => {
     try {
-        const userDocRef = doc(db, "users", uid);
-        await updateDoc(userDocRef, {
-            savedSongs: arrayUnion(songId)
+        const playlistDocRef = doc(db, "playlists", playlistId);
+        await updateDoc(playlistDocRef, {
+            songs: arrayUnion(songId)
         });
     } catch (error) {
         console.log(error);
@@ -31,6 +31,24 @@ const getLoggedUserSongsByDocIds = async (userSongsDocIds: string[]) => {
     }
 
     return userSongs as Song[];
+}
+
+const getLoggedUserPlaylists = async (uid: string) => {
+    const userPlaylists: Playlist[] = [];
+
+    try {
+        const playlistsDocsRef = await getDocs(collection(db, "playlists"));
+        await Promise.all(playlistsDocsRef.docs.map(async (doc) => {
+            const data = doc.data();
+            if (data.artistUid === uid) {
+                userPlaylists.push({ ...data } as Playlist);
+            }
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+
+    return userPlaylists;
 }
 
 const getAllNonPrivatePlaylists = async () => {
@@ -155,7 +173,8 @@ export {
     uploadFileToFirebase,
     getDownloadURLByRef,
     getLoggedUserSongsByDocIds,
-    saveSongToFavorites,
+    saveSongToPlaylist,
     createPlaylist,
-    getAllNonPrivatePlaylists
+    getAllNonPrivatePlaylists,
+    getLoggedUserPlaylists
 }
