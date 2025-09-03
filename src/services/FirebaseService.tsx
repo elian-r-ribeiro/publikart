@@ -3,6 +3,20 @@ import { db, storage } from "../../firebase";
 import { addDoc, arrayUnion, collection, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import Song from "@/model/Song";
 import Playlist from "@/model/Playlist";
+import User from "@/model/User";
+
+const getUserDataByUid = async (uid: string) => {
+    try {
+        const userDocRef = doc(db, "users", uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+            return { ...userDoc.data() } as User;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    return null;
+};
 
 const saveSongToPlaylist = async (songId: string, playlistId: string) => {
     try {
@@ -14,6 +28,21 @@ const saveSongToPlaylist = async (songId: string, playlistId: string) => {
         console.log(error);
     }
 }
+
+
+
+const getSongById = async (songId: string) => {
+    try {
+        const songDocRef = doc(db, "songs", songId);
+        const songDoc = await getDoc(songDocRef);
+        if (songDoc.exists()) {
+            return { ...songDoc.data() } as Song;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    return null;
+};
 
 const getLoggedUserSongsByDocIds = async (userSongsDocIds: string[]) => {
     const userSongs: Song[] = [];
@@ -32,6 +61,19 @@ const getLoggedUserSongsByDocIds = async (userSongsDocIds: string[]) => {
 
     return userSongs as Song[];
 }
+
+const getPlaylistById = async (playlistId: string) => {
+    try {
+        const playlistDocRef = doc(db, "playlists", playlistId);
+        const playlistDoc = await getDoc(playlistDocRef);
+        if (playlistDoc.exists()) {
+            return { ...playlistDoc.data() } as Playlist;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    return null;
+};
 
 const getLoggedUserPlaylists = async (uid: string) => {
     const userPlaylists: Playlist[] = [];
@@ -176,5 +218,8 @@ export {
     saveSongToPlaylist,
     createPlaylist,
     getAllNonPrivatePlaylists,
-    getLoggedUserPlaylists
+    getLoggedUserPlaylists,
+    getUserDataByUid,
+    getSongById,
+    getPlaylistById
 }

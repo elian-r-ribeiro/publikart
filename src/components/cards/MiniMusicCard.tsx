@@ -2,9 +2,9 @@
 
 import Song from "@/model/Song";
 import User from "@/model/User";
-import Playlist from "@/model/Playlist"; // <- certifique-se de ter o modelo Playlist
+import Playlist from "@/model/Playlist";
 import { saveSongToPlaylist } from "@/services/FirebaseService";
-import { getLoggedUserPlaylists } from "@/services/FirebaseService"; // <- importa a função que você mostrou
+import { getLoggedUserPlaylists } from "@/services/FirebaseService";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
 
