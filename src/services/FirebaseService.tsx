@@ -1,6 +1,6 @@
 import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase";
-import { addDoc, arrayUnion, collection, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import Song from "@/model/Song";
 import Playlist from "@/model/Playlist";
 import User from "@/model/User";
@@ -18,18 +18,27 @@ const getUserDataByUid = async (uid: string) => {
     return null;
 };
 
-const saveSongToPlaylist = async (songId: string, playlistId: string) => {
+const removeSongFromPlaylist = async (songId: string, playlistId: string) => {
     try {
         const playlistDocRef = doc(db, "playlists", playlistId);
         await updateDoc(playlistDocRef, {
-            songs: arrayUnion(songId)
+            songsIds: arrayRemove(songId)
         });
     } catch (error) {
         console.log(error);
     }
 }
 
-
+const saveSongToPlaylist = async (songId: string, playlistId: string) => {
+    try {
+        const playlistDocRef = doc(db, "playlists", playlistId);
+        await updateDoc(playlistDocRef, {
+            songsIds: arrayUnion(songId)
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const getSongById = async (songId: string) => {
     try {
@@ -44,22 +53,22 @@ const getSongById = async (songId: string) => {
     return null;
 };
 
-const getLoggedUserSongsByDocIds = async (userSongsDocIds: string[]) => {
-    const userSongs: Song[] = [];
+const getSongsByDocIds = async (userSongsDocIds: string[]) => {
+    const songs: Song[] = [];
 
     try {
         await Promise.all(userSongsDocIds.map(async (songId: string) => {
             const songDocRef = doc(db, "songs", songId);
             const songDoc = await getDoc(songDocRef);
             if (songDoc.exists()) {
-                userSongs.push({ ...songDoc.data() } as Song);
+                songs.push({ ...songDoc.data() } as Song);
             }
         }));
     } catch (error) {
         console.log(error);
     }
 
-    return userSongs as Song[];
+    return songs as Song[];
 }
 
 const getPlaylistById = async (playlistId: string) => {
@@ -214,12 +223,13 @@ export {
     getAllSongs,
     uploadFileToFirebase,
     getDownloadURLByRef,
-    getLoggedUserSongsByDocIds,
+    getSongsByDocIds,
     saveSongToPlaylist,
     createPlaylist,
     getAllNonPrivatePlaylists,
     getLoggedUserPlaylists,
     getUserDataByUid,
     getSongById,
-    getPlaylistById
+    getPlaylistById,
+    removeSongFromPlaylist
 }

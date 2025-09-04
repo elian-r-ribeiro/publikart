@@ -7,6 +7,4 @@ export default interface User {
     userSongs: string[];
     userPlaylists: string[];
     savedPlaylists: string[];
-    userAlbums: string[];
-    savedAlbums: string[];
 };

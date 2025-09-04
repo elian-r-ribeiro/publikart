@@ -1,11 +1,11 @@
-import MiniMusicCard from "../cards/MiniMusicCard";
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
-import Playlist from "@/model/Playlist";
 import { useEffect, useState } from "react";
-import { getPlaylistById, getSongById, getUserDataByUid } from "@/services/FirebaseService";
+import { getPlaylistById, getSongsByDocIds, getUserDataByUid } from "@/services/FirebaseService";
+import { useCurrentUser } from "@/context/UserContext";
+import Playlist from "@/model/Playlist";
 import User from "@/model/User";
 import Song from "@/model/Song";
-import { useCurrentUser } from "@/context/UserContext";
+import MiniMusicCard from "../cards/MiniMusicCard";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -16,19 +16,33 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     const loggedUserInfo = useCurrentUser();
     const [playlistInfo, setPlaylistInfo] = useState<Playlist | null>(null);
     const [ownerInfo, setOwnerInfo] = useState<User | null>(null);
+    const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
 
     useEffect(() => {
         async function fetchPlaylistInfo() {
-            const playlistInfoFromFirebase = await getPlaylistById(props.playlistId);
-            setPlaylistInfo(playlistInfoFromFirebase);
-            const ownerInfo = await getUserDataByUid(playlistInfoFromFirebase!.artistUid);
-            setOwnerInfo(ownerInfo);
+            try {
+                const playlist = await getPlaylistById(props.playlistId);
+                if (!playlist) return;
+
+                setPlaylistInfo(playlist);
+
+                const owner = await getUserDataByUid(playlist.artistUid);
+                setOwnerInfo(owner);
+
+                const songs = await getSongsByDocIds(playlist.songsIds ?? []);
+                setPlaylistSongs(songs ?? []);
+            } catch (err) {
+                console.error("Erro ao carregar playlist:", err);
+            }
         }
-
         fetchPlaylistInfo();
-    }, [props.playlistId]);
+    }, [props.playlistId, loggedUserInfo]);
 
-    if (!loggedUserInfo || !playlistInfo) return <p>Loading...</p>;
+    const isLoggedUserPlaylistOwner = loggedUserInfo?.uid === playlistInfo?.artistUid;
+
+    if (!loggedUserInfo || !playlistInfo) {
+        return <p>Loading...</p>;
+    }
 
     return (
         <div className="centerItems gap-6">
@@ -42,15 +56,20 @@ export default function PlaylistPage(props: PlaylistPageProps) {
                         <span className="text-sm">{ownerInfo?.userName}</span>
                     </div>
                     <div className="flex">
-                        <IconPlus className="changeScaleOnHoverDefaultStyleForSmallerElements" />
+                        {!isLoggedUserPlaylistOwner && <IconPlus className="changeScaleOnHoverDefaultStyleForSmallerElements" />}
                         <IconPlayerPlay className="changeScaleOnHoverDefaultStyleForSmallerElements" />
                     </div>
                 </div>
             </div>
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
-                {/* {playlistSongs.map(song => (
-                    <MiniMusicCard key={song.id} song={song} />
-                ))} */}
+                {playlistSongs?.map(song => (
+                    <MiniMusicCard
+                        key={song.id}
+                        song={song}
+                        loggedUser={loggedUserInfo}
+                        isLoggedUserPlaylistOwner={isLoggedUserPlaylistOwner}
+                        playlistId={props.playlistId} />
+                ))}
             </div>
         </div>
     );

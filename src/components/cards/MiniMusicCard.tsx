@@ -3,14 +3,16 @@
 import Song from "@/model/Song";
 import User from "@/model/User";
 import Playlist from "@/model/Playlist";
-import { saveSongToPlaylist } from "@/services/FirebaseService";
+import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/FirebaseService";
 import { getLoggedUserPlaylists } from "@/services/FirebaseService";
-import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
+import { IconMinus, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
 
 interface MiniMusicCardProps {
     song: Song;
     loggedUser: User;
+    isLoggedUserPlaylistOwner?: boolean;
+    playlistId?: string;
 };
 
 export default function MiniMusicCard(props: MiniMusicCardProps) {
@@ -40,6 +42,11 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
             const userPlaylists = await getLoggedUserPlaylists(props.loggedUser.uid);
             setPlaylists(userPlaylists);
         }
+    }
+
+    async function handleMinusClick() {
+        await removeSongFromPlaylist(props.song.id, props.playlistId!);
+        window.location.reload();
     }
 
     useEffect(() => {
@@ -76,6 +83,12 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                         onClick={handlePlusClick}
                         className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                     />
+                    {props.isLoggedUserPlaylistOwner &&
+                        <IconMinus
+                            onClick={handleMinusClick}
+                            className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
+                        />
+                    }
                 </div>
 
                 {showSelect && (
