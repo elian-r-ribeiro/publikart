@@ -40,6 +40,17 @@ const saveSongToPlaylist = async (songId: string, playlistId: string) => {
     }
 }
 
+const addSongsToLoggedUserSavedSongs = async (uid: string, songId: string) => {
+    try {
+        const userDocRef = doc(db, "users", uid);
+        await updateDoc(userDocRef, {
+            savedSongs: arrayUnion(songId)
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const getSongById = async (songId: string) => {
     try {
         const songDocRef = doc(db, "songs", songId);
@@ -231,5 +242,6 @@ export {
     getUserDataByUid,
     getSongById,
     getPlaylistById,
-    removeSongFromPlaylist
+    removeSongFromPlaylist,
+    addSongsToLoggedUserSavedSongs
 }

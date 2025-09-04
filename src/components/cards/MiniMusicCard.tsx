@@ -3,7 +3,7 @@
 import Song from "@/model/Song";
 import User from "@/model/User";
 import Playlist from "@/model/Playlist";
-import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/FirebaseService";
+import { addSongsToLoggedUserSavedSongs, removeSongFromPlaylist, saveSongToPlaylist } from "@/services/FirebaseService";
 import { getLoggedUserPlaylists } from "@/services/FirebaseService";
 import { IconMinus, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
@@ -29,10 +29,16 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
 
     async function handleSongSaving(e: React.ChangeEvent<HTMLSelectElement>) {
         const playlistId = e.target.value;
-        if (!playlistId) return;
 
-        await saveSongToPlaylist(props.song.id, playlistId);
-        setShowSelect(false);
+        if (!playlistId) return;
+        if (playlistId === "savedSongs") {
+            await addSongsToLoggedUserSavedSongs(props.loggedUser.uid, props.song.id);
+            setShowSelect(false);
+            window.location.reload();
+        } else {
+            await saveSongToPlaylist(props.song.id, playlistId);
+            setShowSelect(false);
+        }
     }
 
     async function handlePlusClick() {
@@ -97,6 +103,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                         className="bg-zinc-800 text-white rounded p-1 w-49"
                     >
                         <option value="">Selecione uma playlist...</option>
+                        <option value="savedSongs">Músicas Salvas</option>
                         {playlists.map((playlist) => (
                             <option key={playlist.id} value={playlist.id}>
                                 {playlist.playlistTitle}
