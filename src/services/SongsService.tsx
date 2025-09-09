@@ -10,23 +10,6 @@ const getDefaultSongURL = async () => {
     return defaultSongURL;
 }
 
-const getAllSongs = async () => {
-    const allSongs: Song[] = [];
-
-    try {
-        const songsDocsRef = await getDocs(collection(db, "songs"));
-
-        await Promise.all(songsDocsRef.docs.map(async (doc) => {
-            const data = doc.data();
-            allSongs.push({ ...data } as Song);
-        }));
-    } catch (error) {
-        console.log(error);
-    }
-
-    return allSongs;
-}
-
 const getSongsListByDocIds = async (userSongsDocIds: string[]) => {
     const songs: Song[] = [];
 
@@ -86,7 +69,6 @@ const addSongsToLoggedUserSavedSongs = async (uid: string, songId: string) => {
 export {
     getDefaultSongURL,
     uploadSongToFirebase,
-    getAllSongs,
     getSongsListByDocIds,
     addSongsToLoggedUserSavedSongs
 }

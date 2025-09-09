@@ -10,13 +10,13 @@ export default function PublicPlaylists() {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
     useEffect(() => {
-        const fetchPlaylists = async () => {
-            const nonPrivatePlaylists = await getAllNonPrivatePlaylists();
-            setPlaylists(nonPrivatePlaylists);
-        };
-
         fetchPlaylists();
     }, []);
+
+    const fetchPlaylists = async () => {
+        const nonPrivatePlaylists = await getAllNonPrivatePlaylists();
+        setPlaylists(nonPrivatePlaylists);
+    };
 
     return (
         <div className="flex justify-center">

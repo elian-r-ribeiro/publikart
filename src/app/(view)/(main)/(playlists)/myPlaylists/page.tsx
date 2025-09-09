@@ -16,13 +16,13 @@ export default function MyPlaylists() {
     }
 
     useEffect(() => {
-        const fetchPlaylists = async () => {
-            const loggedUserPlaylists = await getLoggedUserPlaylists(loggedUserData.uid);
-            setPlaylists(loggedUserPlaylists);
-        };
-
         fetchPlaylists();
     }, [loggedUserData.uid]);
+
+    const fetchPlaylists = async () => {
+        const loggedUserPlaylists = await getLoggedUserPlaylists(loggedUserData.uid);
+        setPlaylists(loggedUserPlaylists);
+    };
 
     return (
         <div className="flex justify-center">

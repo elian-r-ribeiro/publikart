@@ -13,14 +13,14 @@ export default function SavedSongs() {
 
 
     useEffect(() => {
-        const fetchSongs = async () => {
-            if (!loggedUserInfo) return;
-            const songs = await getSongsListByDocIds(loggedUserInfo.savedSongs);
-            setLoggedUserSongs(songs);
-        };
-
         fetchSongs();
     }, [loggedUserInfo]);
+
+    const fetchSongs = async () => {
+        if (!loggedUserInfo) return;
+        const songs = await getSongsListByDocIds(loggedUserInfo.savedSongs);
+        setLoggedUserSongs(songs);
+    };
 
     if (!loggedUserSongs || !loggedUserInfo) {
         return <p>Carregando...</p>;

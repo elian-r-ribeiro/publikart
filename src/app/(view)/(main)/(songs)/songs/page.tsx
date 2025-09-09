@@ -4,7 +4,7 @@ import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import { useCurrentUser } from "@/context/UserContext";
 import Song from "@/model/Song";
 import User from "@/model/User";
-import { getAllSongs } from "@/services/SongsService";
+import { getEverythingFromOneCollection } from "@/services/FirebaseService";
 import { useState, useEffect } from "react";
 
 export default function Songs() {
@@ -13,14 +13,14 @@ export default function Songs() {
 
 
     useEffect(() => {
-        const fetchSongs = async () => {
-            if (!loggedUserInfo) return;
-            const songs = await getAllSongs();
-            setAllSongsFromFirebase(songs);
-        };
-
         fetchSongs();
     }, [loggedUserInfo]);
+
+    const fetchSongs = async () => {
+        if (!loggedUserInfo) return;
+        const songs = await getEverythingFromOneCollection("songs") as Song[];
+        setAllSongsFromFirebase(songs);
+    };
 
     if (!allSongsFromFirebase || !loggedUserInfo) {
         return <p>Carregando...</p>;

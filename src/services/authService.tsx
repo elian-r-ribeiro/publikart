@@ -1,35 +1,34 @@
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth, db, storage } from "../../firebase";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 
 function getLoggedUserInfoHook() {
+  const [loggedUserData, setLoggedUserData] = useState<any>(null);
 
-    const [loggedUserDataFromHook, setLoggedUserDataFromHook] = useState<any>(null);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            setLoggedUserData(userDoc.data());
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        setLoggedUserData(null);
+      }
+    });
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                try {
-                    const userDocRef = doc(db, "users", user.uid);
-                    const userDoc = await getDoc(userDocRef);
-                    if (userDoc.exists()) {
-                        setLoggedUserDataFromHook(userDoc.data());
-                    }
-                } catch (error) {
-                    console.error(error);
-                }
-            } else {
-                setLoggedUserDataFromHook(null);
-            }
-        });
+    return () => unsubscribe();
+  }, []);
 
-        return () => unsubscribe();
-    }, []);
-
-    return loggedUserDataFromHook;
+  return loggedUserData;
 }
 
 const login = async (email: string, password: string): Promise<void> => {

@@ -12,16 +12,14 @@ export default function MySongs() {
     const loggedUserInfo: User | null = useCurrentUser();
 
     useEffect(() => {
-
-        const fetchSongs = async () => {
-            if (!loggedUserInfo) return;
-            const songs = await getSongsListByDocIds(loggedUserInfo.userSongs);
-            console.log(songs);
-            setAllLoggedUserSongsFromFirebase(songs);
-        };
-
         fetchSongs();
     }, [loggedUserInfo]);
+
+    const fetchSongs = async () => {
+        if (!loggedUserInfo) return;
+        const songs = await getSongsListByDocIds(loggedUserInfo.userSongs);
+        setAllLoggedUserSongsFromFirebase(songs);
+    };
 
     if (!allLoggedUserSongsFromFirebase || !loggedUserInfo) {
         return <p>Carregando...</p>;

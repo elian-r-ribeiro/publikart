@@ -1,6 +1,23 @@
 import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+
+const getEverythingFromOneCollection = async (collectionName: string) => {
+    const allItemsArray: any[] = [];
+    
+        try {
+            const songsDocsRef = await getDocs(collection(db, collectionName));
+    
+            await Promise.all(songsDocsRef.docs.map(async (doc) => {
+                const data = doc.data();
+                allItemsArray.push({ ...data });
+            }));
+        } catch (error) {
+            console.log(error);
+        }
+    
+        return allItemsArray;
+}
 
 const getSomethingFromFirebaseByDocumentId = async (collectionName: string, documentId: string) => {
     try {
@@ -39,5 +56,6 @@ const getDownloadURLByRef = async (ref: StorageReference): Promise<string> => {
 export {
     uploadFileToFirebase,
     getDownloadURLByRef,
-    getSomethingFromFirebaseByDocumentId
+    getSomethingFromFirebaseByDocumentId,
+    getEverythingFromOneCollection
 }

@@ -20,24 +20,25 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
 
     useEffect(() => {
-        async function fetchPlaylistInfo() {
-            try {
-                const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
-                if (!playlist) return;
-
-                setPlaylistInfo(playlist);
-
-                const owner = await getSomethingFromFirebaseByDocumentId("users", playlist.artistUid) as User;
-                setOwnerInfo(owner);
-
-                const songs = await getSongsListByDocIds(playlist.songsIds ?? []);
-                setPlaylistSongs(songs ?? []);
-            } catch (err) {
-                console.error("Erro ao carregar playlist:", err);
-            }
-        }
         fetchPlaylistInfo();
     }, [props.playlistId, loggedUserInfo]);
+
+    const fetchPlaylistInfo = async() => {
+        try {
+            const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
+            if (!playlist) return;
+
+            setPlaylistInfo(playlist);
+
+            const owner = await getSomethingFromFirebaseByDocumentId("users", playlist.artistUid) as User;
+            setOwnerInfo(owner);
+
+            const songs = await getSongsListByDocIds(playlist.songsIds ?? []);
+            setPlaylistSongs(songs ?? []);
+        } catch (err) {
+            console.error("Erro ao carregar playlist:", err);
+        }
+    }
 
     const isLoggedUserPlaylistOwner = loggedUserInfo?.uid === playlistInfo?.artistUid;
 

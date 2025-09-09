@@ -1,26 +1,20 @@
 'use client'
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import User from "@/model/User";
 import { getLoggedUserInfoHook } from "@/services/AuthService";
 
 const UserContext = createContext<User | null>(null);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
+  const user = getLoggedUserInfoHook();
 
-    const loggedUser = getLoggedUserInfoHook();
-
-    useEffect(() => {
-        setUser(loggedUser);
-    }, [loggedUser]);
-
-    return (
-        <UserContext.Provider value={user}>
-            {children}
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider value={user}>
+      {children}
+    </UserContext.Provider>
+  );
 }
 
 export function useCurrentUser() {
-    return useContext(UserContext);
+  return useContext(UserContext);
 }
