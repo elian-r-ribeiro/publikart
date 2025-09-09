@@ -3,9 +3,9 @@
 import { useState } from "react";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { uploadSongToFirebase } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
+import { uploadSongToFirebase } from "@/services/SongsService";
 
 type FormValues = {
     songTitle: string;

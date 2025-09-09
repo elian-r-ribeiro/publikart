@@ -4,7 +4,7 @@ import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import { useCurrentUser } from "@/context/UserContext";
 import Song from "@/model/Song";
 import User from "@/model/User";
-import { getAllSongs } from "@/services/FirebaseService";
+import { getAllSongs } from "@/services/SongsService";
 import { useState, useEffect } from "react";
 
 export default function Songs() {

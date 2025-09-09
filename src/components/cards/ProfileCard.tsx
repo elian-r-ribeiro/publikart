@@ -1,6 +1,5 @@
 'use client'
 
-import { updateUserProfile, updateUserProfileWithProfilePicture, logoutFromFirebase } from "@/services/AuthService";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ArtistProfileButtons from "../others/ArtistProfileButtons";
@@ -9,6 +8,8 @@ import { useRouter } from "next/navigation";
 import User from "../../model/User";
 import { useCurrentUser } from "@/context/UserContext";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
+import { updateUserProfile, updateUserProfileWithProfilePicture } from "@/services/UserService";
+import { logoutFromFirebase } from "@/services/AuthService";
 
 export default function ProfileCard() {
 

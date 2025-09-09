@@ -1,6 +1,6 @@
 'use client'
 
-import { getDefaultSongURL } from "@/services/FirebaseService";
+import { getDefaultSongURL } from "@/services/SongsService";
 import { IconMusic } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 

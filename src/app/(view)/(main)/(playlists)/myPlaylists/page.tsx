@@ -3,7 +3,7 @@
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
-import { getLoggedUserPlaylists } from "@/services/FirebaseService";
+import { getLoggedUserPlaylists } from "@/services/PlaylistsService";
 import { useEffect, useState } from "react";
 
 export default function MyPlaylists() {

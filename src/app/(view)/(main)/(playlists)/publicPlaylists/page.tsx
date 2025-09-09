@@ -2,7 +2,7 @@
 
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
 import Playlist from "@/model/Playlist";
-import { getAllNonPrivatePlaylists } from "@/services/FirebaseService";
+import { getAllNonPrivatePlaylists } from "@/services/PlaylistsService";
 import { useEffect, useState } from "react";
 
 export default function PublicPlaylists() {

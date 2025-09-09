@@ -1,11 +1,11 @@
 'use client';
 
-import { handleRegister } from "@/services/AuthService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DefaultImageInput from "../others/DefaultImageInput";
+import { registerUser } from "@/services/AuthService";
 
 export default function RegisterForm() {
 
@@ -25,7 +25,7 @@ export default function RegisterForm() {
     const password = watch("password");
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await handleRegister(data.email, data.password, data.userName, data.imageInput);
+        await registerUser(data.email, data.password, data.userName, data.imageInput);
         router.push("/login/selectPreferences");
     };
 

@@ -3,10 +3,10 @@
 import Song from "@/model/Song";
 import User from "@/model/User";
 import Playlist from "@/model/Playlist";
-import { addSongsToLoggedUserSavedSongs, removeSongFromPlaylist, saveSongToPlaylist } from "@/services/FirebaseService";
-import { getLoggedUserPlaylists } from "@/services/FirebaseService";
 import { IconMinus, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
+import { addSongsToLoggedUserSavedSongs } from "@/services/SongsService";
+import { getLoggedUserPlaylists, removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
 
 interface MiniMusicCardProps {
     song: Song;

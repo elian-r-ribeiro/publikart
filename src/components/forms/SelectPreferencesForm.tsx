@@ -2,8 +2,9 @@
 
 import { IconBook, IconBrush, IconMusic, IconUser } from "@tabler/icons-react";
 import PreferenceOption from "../main/PreferenceOption";
-import { changeUserPreferenceOption, getLoggedUserInfoHook } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
+import { getLoggedUserInfoHook } from "@/services/AuthService";
+import { changeUserPreferenceOption } from "@/services/UserService";
 
 export default function SelectPreferencesForm() {
 

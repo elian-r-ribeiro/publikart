@@ -3,10 +3,10 @@
 import { useState } from "react";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { createPlaylist } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
+import { createPlaylist } from "@/services/PlaylistsService";
 
 type FormValues = {
     playlistTitle: string;

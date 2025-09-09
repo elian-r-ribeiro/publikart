@@ -4,7 +4,7 @@ import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import { useCurrentUser } from "@/context/UserContext";
 import Song from "@/model/Song";
 import User from "@/model/User";
-import { getSongsByDocIds } from "@/services/FirebaseService";
+import { getSongsListByDocIds } from "@/services/SongsService";
 import { useState, useEffect } from "react";
 
 export default function MySongs() {
@@ -15,7 +15,7 @@ export default function MySongs() {
 
         const fetchSongs = async () => {
             if (!loggedUserInfo) return;
-            const songs = await getSongsByDocIds(loggedUserInfo.userSongs);
+            const songs = await getSongsListByDocIds(loggedUserInfo.userSongs);
             console.log(songs);
             setAllLoggedUserSongsFromFirebase(songs);
         };

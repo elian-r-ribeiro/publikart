@@ -1,11 +1,12 @@
 import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { getPlaylistById, getSongsByDocIds, getUserDataByUid } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
 import User from "@/model/User";
 import Song from "@/model/Song";
 import MiniMusicCard from "../cards/MiniMusicCard";
+import { getSomethingFromFirebaseByDocumentId} from "@/services/FirebaseService";
+import { getSongsListByDocIds } from "@/services/SongsService";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -21,15 +22,15 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     useEffect(() => {
         async function fetchPlaylistInfo() {
             try {
-                const playlist = await getPlaylistById(props.playlistId);
+                const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
                 if (!playlist) return;
 
                 setPlaylistInfo(playlist);
 
-                const owner = await getUserDataByUid(playlist.artistUid);
+                const owner = await getSomethingFromFirebaseByDocumentId("users", playlist.artistUid) as User;
                 setOwnerInfo(owner);
 
-                const songs = await getSongsByDocIds(playlist.songsIds ?? []);
+                const songs = await getSongsListByDocIds(playlist.songsIds ?? []);
                 setPlaylistSongs(songs ?? []);
             } catch (err) {
                 console.error("Erro ao carregar playlist:", err);
