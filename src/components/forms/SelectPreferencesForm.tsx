@@ -3,13 +3,13 @@
 import { IconBook, IconBrush, IconMusic, IconUser } from "@tabler/icons-react";
 import PreferenceOption from "../main/PreferenceOption";
 import { useRouter } from "next/navigation";
-import { getLoggedUserInfoHook } from "@/services/AuthService";
 import { changeUserPreferenceOption } from "@/services/UserService";
+import { useCurrentUser } from "@/context/UserContext";
 
 export default function SelectPreferencesForm() {
 
     const router = useRouter();
-    const loggedUserData = getLoggedUserInfoHook();
+    const loggedUserData = useCurrentUser();
 
     if (!loggedUserData) {
         return <div>Carregando...</div>

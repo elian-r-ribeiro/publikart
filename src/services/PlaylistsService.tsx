@@ -79,29 +79,10 @@ const getAllNonPrivatePlaylists = async () => {
     return nonPrivatePlaylists;
 }
 
-const getLoggedUserPlaylists = async (uid: string) => {
-    const userPlaylists: Playlist[] = [];
-
-    try {
-        const playlistsDocsRef = await getDocs(collection(db, "playlists"));
-        await Promise.all(playlistsDocsRef.docs.map(async (doc) => {
-            const data = doc.data();
-            if (data.artistUid === uid) {
-                userPlaylists.push({ ...data } as Playlist);
-            }
-        }));
-    } catch (error) {
-        console.log(error);
-    }
-
-    return userPlaylists;
-}
-
 export {
     createPlaylist,
     saveSongToPlaylist,
     getAllNonPrivatePlaylists,
-    getLoggedUserPlaylists,
     removeSongFromPlaylist,
     addPlaylistToLoggedUserSavedPlaylists
 }

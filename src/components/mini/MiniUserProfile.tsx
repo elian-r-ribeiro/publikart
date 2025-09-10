@@ -1,12 +1,12 @@
 'use client';
 
+import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
-import { getLoggedUserInfoHook } from "@/services/AuthService";
 import Image from "next/image";
 
 export default function MiniUserProfile() {
 
-    const loggedUserData: User = getLoggedUserInfoHook();
+    const loggedUserData = useCurrentUser() as User;
 
     if (!loggedUserData) {
         return <div>Carregando...</div>

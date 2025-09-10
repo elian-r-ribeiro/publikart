@@ -3,7 +3,7 @@
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
-import { getLoggedUserPlaylists } from "@/services/PlaylistsService";
+import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
 import { useEffect, useState } from "react";
 
 export default function MyPlaylists() {
@@ -11,18 +11,19 @@ export default function MyPlaylists() {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const loggedUserData = useCurrentUser();
 
-    if (!loggedUserData) {
-        return <div>Carregando...</div>;
-    }
-
     useEffect(() => {
         fetchPlaylists();
-    }, [loggedUserData.uid]);
+    }, [loggedUserData]);
 
     const fetchPlaylists = async () => {
-        const loggedUserPlaylists = await getLoggedUserPlaylists(loggedUserData.uid);
+        if(!loggedUserData) return;
+        const loggedUserPlaylists = await getDocumentsThatUserUidIsOwnerFromFirebase(loggedUserData.uid, "playlists") as Playlist[];
         setPlaylists(loggedUserPlaylists);
     };
+
+    if (!loggedUserData || !playlists) {
+        return <div>Carregando...</div>;
+    }
 
     return (
         <div className="flex justify-center">

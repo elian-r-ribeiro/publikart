@@ -2,6 +2,44 @@ import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/sto
 import { db, storage } from "../../firebase";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 
+const getDocumentsThatUserUidIsOwnerFromFirebase = async(uid: string, collectionName: string) => {
+    const documentsArray: object[] = [];
+
+    try{
+        const collectionDocs = await getDocs(collection(db, collectionName));
+
+        await Promise.all(collectionDocs.docs.map(async (doc) => {
+            const data = doc.data();
+
+            if(data.artistUid === uid) {
+                documentsArray.push({...data});
+            }
+        }))
+    } catch(error){
+        console.log(error)
+    }
+
+    return documentsArray;
+}
+
+const getArrayOfDocumentsByDocIdsFromFirebase = async (idsArray: string[], collectionName: string) => {
+    const docsArray: object[] = [];
+
+    try {
+        await Promise.all(idsArray.map(async (id) => {
+            const docRef = doc(db, collectionName, id);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                docsArray.push({ ...docSnap.data() });
+            }
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+    return docsArray;
+}
+
 const getEverythingFromOneCollection = async (collectionName: string) => {
     const allItemsArray: any[] = [];
     
@@ -57,5 +95,7 @@ export {
     uploadFileToFirebase,
     getDownloadURLByRef,
     getSomethingFromFirebaseByDocumentId,
-    getEverythingFromOneCollection
+    getEverythingFromOneCollection,
+    getArrayOfDocumentsByDocIdsFromFirebase,
+    getDocumentsThatUserUidIsOwnerFromFirebase
 }

@@ -6,7 +6,8 @@ import Playlist from "@/model/Playlist";
 import { IconMinus, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
 import { addSongsToLoggedUserSavedSongs } from "@/services/SongsService";
-import { getLoggedUserPlaylists, removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
+import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
+import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
 
 interface MiniMusicCardProps {
     song: Song;
@@ -45,7 +46,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
         setShowSelect((prev) => !prev);
 
         if (!showSelect) {
-            const userPlaylists = await getLoggedUserPlaylists(props.loggedUser.uid);
+            const userPlaylists = await getDocumentsThatUserUidIsOwnerFromFirebase(props.loggedUser.uid, "playlists") as Playlist[];
             setPlaylists(userPlaylists);
         }
     }
