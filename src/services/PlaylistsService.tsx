@@ -27,6 +27,17 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
     }
 }
 
+const addPlaylistToLoggedUserSavedPlaylists = async(loggedUserId: string, playlistId: string) => {
+    try {
+        const userDocRef = doc(db, "users", loggedUserId);
+        await updateDoc(userDocRef, {
+            savedPlaylists: arrayUnion(playlistId)
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const saveSongToPlaylist = async (songId: string, playlistId: string) => {
     try {
         const playlistDocRef = doc(db, "playlists", playlistId);
@@ -91,5 +102,6 @@ export {
     saveSongToPlaylist,
     getAllNonPrivatePlaylists,
     getLoggedUserPlaylists,
-    removeSongFromPlaylist
+    removeSongFromPlaylist,
+    addPlaylistToLoggedUserSavedPlaylists
 }
