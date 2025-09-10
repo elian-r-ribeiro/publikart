@@ -5,8 +5,7 @@ import Playlist from "@/model/Playlist";
 import User from "@/model/User";
 import Song from "@/model/Song";
 import MiniMusicCard from "../cards/MiniMusicCard";
-import { getSomethingFromFirebaseByDocumentId} from "@/services/FirebaseService";
-import { getSongsListByDocIds } from "@/services/SongsService";
+import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId} from "@/services/FirebaseService";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -33,11 +32,15 @@ export default function PlaylistPage(props: PlaylistPageProps) {
             const owner = await getSomethingFromFirebaseByDocumentId("users", playlist.artistUid) as User;
             setOwnerInfo(owner);
 
-            const songs = await getSongsListByDocIds(playlist.songsIds ?? []);
+            const songs = await getArrayOfDocumentsByDocIdsFromFirebase(playlist.songsIds ?? [], "songs") as Song[];
             setPlaylistSongs(songs ?? []);
         } catch (err) {
             console.error("Erro ao carregar playlist:", err);
         }
+    }
+
+    const handleRemoveSongFromState = (songId: string) => {
+        setPlaylistSongs((prevSongs) => prevSongs.filter(song => song.id != songId));
     }
 
     const isLoggedUserPlaylistOwner = loggedUserInfo?.uid === playlistInfo?.artistUid;
@@ -69,8 +72,11 @@ export default function PlaylistPage(props: PlaylistPageProps) {
                         key={song.id}
                         song={song}
                         loggedUser={loggedUserInfo}
+                        isSongInPlaylist={true}
                         isLoggedUserPlaylistOwner={isLoggedUserPlaylistOwner}
-                        playlistId={props.playlistId} />
+                        playlistId={props.playlistId} 
+                        onSongRemoved={handleRemoveSongFromState}
+                        />
                 ))}
             </div>
         </div>

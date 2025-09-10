@@ -12,8 +12,10 @@ import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseS
 interface MiniMusicCardProps {
     song: Song;
     loggedUser: User;
+    isSongInPlaylist?: boolean;
     isLoggedUserPlaylistOwner?: boolean;
     playlistId?: string;
+    onSongRemoved?: (songId: string) => void;
 };
 
 export default function MiniMusicCard(props: MiniMusicCardProps) {
@@ -35,7 +37,6 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
         if (playlistId === "savedSongs") {
             await addSongsToLoggedUserSavedSongs(props.loggedUser.uid, props.song.id);
             setShowSelect(false);
-            window.location.reload();
         } else {
             await saveSongToPlaylist(props.song.id, playlistId);
             setShowSelect(false);
@@ -53,7 +54,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
 
     async function handleMinusClick() {
         await removeSongFromPlaylist(props.song.id, props.playlistId!);
-        window.location.reload();
+        props.onSongRemoved!(props.song.id);
     }
 
     useEffect(() => {
@@ -88,7 +89,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                         onClick={handlePlusClick}
                         className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                     />
-                    {props.isLoggedUserPlaylistOwner &&
+                    {props.isSongInPlaylist && props.isLoggedUserPlaylistOwner &&
                         <IconMinus
                             onClick={handleMinusClick}
                             className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"

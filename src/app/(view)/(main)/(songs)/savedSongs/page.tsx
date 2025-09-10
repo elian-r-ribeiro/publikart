@@ -11,6 +11,7 @@ export default function SavedSongs() {
     const [loggedUserSongs, setLoggedUserSongs] = useState<Song[] | null>(null);
     const loggedUserInfo: User | null = useCurrentUser();
 
+
     useEffect(() => {
         fetchSongs();
     }, [loggedUserInfo]);
