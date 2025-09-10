@@ -74,11 +74,9 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
     }, [showSelect]);
 
     return (
-        <div className="defaultCardsSize bg-zinc-700/40 rounded-lg p-4 backdrop-blur changeScaleOnHoverDefaultStyle">
-            <img src={props.song.imgUrl} alt="Song image" className="w-full h-32 object-cover rounded-md mb-2" />
-            <div className="text-center">
-                <h2 className="text-lg font-semibold truncate overflow-hidden whitespace-nowrap">{props.song.title}</h2>
-            </div>
+        <div className="centerItems defaultCardsSize bg-zinc-700/40 rounded-lg p-4 backdrop-blur changeScaleOnHoverDefaultStyle">
+            <img src={props.song.imgUrl} alt="Song image" className="w-32 h-32 object-cover rounded-md mb-2" />
+            <h2 className="w-full text-center text-lg font-semibold truncate overflow-hidden whitespace-nowrap">{props.song.title}</h2>
             <div className="flex flex-col items-center gap-2" ref={selectRef}>
                 <div className="flex justify-center gap-2">
                     <IconPlayerPlay
