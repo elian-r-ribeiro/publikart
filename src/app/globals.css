@@ -93,3 +93,16 @@ body {
 .animate-visualizer2 { animation: visualizer2 0.6s infinite ease-in-out; }
 .animate-visualizer3 { animation: visualizer3 0.6s infinite ease-in-out; }
 .animate-visualizer4 { animation: visualizer4 0.6s infinite ease-in-out; }
+
+::-webkit-scrollbar {
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #999 transparent;
+}

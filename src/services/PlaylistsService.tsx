@@ -5,6 +5,9 @@ import Playlist from "@/model/Playlist";
 
 const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string) => {
     try {
+
+        const playlistOwnerDocRef = doc(db, "users", uid);
+
         let playlistData: Partial<Playlist> = {
             artistUid: uid,
             playlistTitle: playlistTitle,
@@ -22,6 +25,8 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
         }
 
         await updateDoc(createdDocumentRef, playlistData);
+
+        await updateDoc(playlistOwnerDocRef, {userPlaylists: arrayUnion(playlistData.id)});
     } catch (error) {
         console.log(error);
     }
