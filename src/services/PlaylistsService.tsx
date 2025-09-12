@@ -26,13 +26,13 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
 
         await updateDoc(createdDocumentRef, playlistData);
 
-        await updateDoc(playlistOwnerDocRef, {userPlaylists: arrayUnion(playlistData.id)});
+        await updateDoc(playlistOwnerDocRef, { userPlaylists: arrayUnion(playlistData.id) });
     } catch (error) {
         console.log(error);
     }
 }
 
-const addPlaylistToLoggedUserSavedPlaylists = async(loggedUserId: string, playlistId: string) => {
+const addPlaylistToLoggedUserSavedPlaylists = async (loggedUserId: string, playlistId: string) => {
     try {
         const userDocRef = doc(db, "users", loggedUserId);
         await updateDoc(userDocRef, {
@@ -65,6 +65,25 @@ const removeSongFromPlaylist = async (songId: string, playlistId: string) => {
     }
 }
 
+const getAllArtistNonPrivatePlaylists = async (artistUid: string) => {
+    const artistNonPrivatePlaylists: Playlist[] = [];
+
+    try {
+        const playlistsDocsRef = await getDocs(collection(db, "playlists"));
+
+        await Promise.all(playlistsDocsRef.docs.map(async (doc) => {
+            const data = doc.data();
+            if (data.artistUid === artistUid && !data.isPrivate) {
+                artistNonPrivatePlaylists.push({ ...data } as Playlist)
+            }
+        }))
+    } catch (error) {
+        console.log(error);
+    }
+
+    return artistNonPrivatePlaylists;
+}
+
 const getAllNonPrivatePlaylists = async () => {
     const nonPrivatePlaylists: Playlist[] = [];
 
@@ -89,5 +108,6 @@ export {
     saveSongToPlaylist,
     getAllNonPrivatePlaylists,
     removeSongFromPlaylist,
-    addPlaylistToLoggedUserSavedPlaylists
+    addPlaylistToLoggedUserSavedPlaylists,
+    getAllArtistNonPrivatePlaylists
 }
