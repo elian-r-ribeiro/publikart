@@ -1,7 +1,6 @@
 'use client'
 
 import Song from "@/model/Song";
-import User from "@/model/User";
 import Playlist from "@/model/Playlist";
 import { IconMinus, IconPlayerPlay, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
