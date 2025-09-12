@@ -4,7 +4,6 @@ import ArtistCard from "../cards/ArtistCard";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import User from "@/model/User";
 import { useCurrentUser } from "@/context/UserContext";
-import MiniPlaylistCard from "../cards/MiniPlaylistCard";
 import ArtistSongs from "./ArtistSongs";
 import ArtistPlaylists from "./ArtistPlaylists";
 

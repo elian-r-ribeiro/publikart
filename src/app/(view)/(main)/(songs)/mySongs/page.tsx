@@ -29,7 +29,7 @@ export default function MySongs() {
         <div className="flex justify-center">
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
                 {allLoggedUserSongsFromFirebase.map((song, index) => (
-                    <MiniMusicCard loggedUser={loggedUserInfo} key={index} song={song} />
+                    <MiniMusicCard key={index} song={song} />
                 ))}
             </div>
         </div>

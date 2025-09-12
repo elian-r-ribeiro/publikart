@@ -5,7 +5,7 @@ import Playlist from "@/model/Playlist";
 import User from "@/model/User";
 import Song from "@/model/Song";
 import MiniMusicCard from "../cards/MiniMusicCard";
-import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId} from "@/services/FirebaseService";
+import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -22,7 +22,7 @@ export default function PlaylistPage(props: PlaylistPageProps) {
         fetchPlaylistInfo();
     }, [props.playlistId, loggedUserInfo]);
 
-    const fetchPlaylistInfo = async() => {
+    const fetchPlaylistInfo = async () => {
         try {
             const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
             if (!playlist) return;
@@ -71,12 +71,11 @@ export default function PlaylistPage(props: PlaylistPageProps) {
                     <MiniMusicCard
                         key={song.id}
                         song={song}
-                        loggedUser={loggedUserInfo}
                         isSongInPlaylist={true}
                         isLoggedUserPlaylistOwner={isLoggedUserPlaylistOwner}
-                        playlistId={props.playlistId} 
+                        playlistId={props.playlistId}
                         onSongRemoved={handleRemoveSongFromState}
-                        />
+                    />
                 ))}
             </div>
         </div>

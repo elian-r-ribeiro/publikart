@@ -16,7 +16,7 @@ export default function MyPlaylists() {
     }, [loggedUserData]);
 
     const fetchPlaylists = async () => {
-        if(!loggedUserData) return;
+        if (!loggedUserData) return;
         const loggedUserPlaylists = await getDocumentsThatUserUidIsOwnerFromFirebase(loggedUserData.uid, "playlists") as Playlist[];
         setPlaylists(loggedUserPlaylists);
     };

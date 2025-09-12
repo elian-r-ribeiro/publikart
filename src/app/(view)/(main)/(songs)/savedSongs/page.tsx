@@ -30,7 +30,7 @@ export default function SavedSongs() {
         <div className="flex justify-center">
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
                 {loggedUserSongs.map((song, index) => (
-                    <MiniMusicCard loggedUser={loggedUserInfo} key={index} song={song} />
+                    <MiniMusicCard key={index} song={song} />
                 ))}
             </div>
         </div>

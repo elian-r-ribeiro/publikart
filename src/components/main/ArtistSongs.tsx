@@ -12,14 +12,11 @@ interface ArtistSongsProps {
 
 export default function ArtistSongs(props: ArtistSongsProps) {
 
-    const loggedUserInfo = useCurrentUser();
     const [artistSongs, setArtistSongs] = useState<Song[] | []>([]);
 
     useEffect(() => {
-        if (loggedUserInfo) {
-            fetchArtistSongs();
-        }
-    }, [loggedUserInfo]);
+        fetchArtistSongs();
+    }, [props.artist]);
 
     const fetchArtistSongs = async () => {
         try {
@@ -30,15 +27,11 @@ export default function ArtistSongs(props: ArtistSongsProps) {
         }
     }
 
-    if (!loggedUserInfo) {
-        return <p>Carregando...</p>
-    }
-
     return (
         <div className="flex gap-3 max-w-112 md:max-w-128 lg:max-w-256 overflow-x-auto pb-3">
             {artistSongs.map(song => (
                 <div key={song.id} className="shrink-0">
-                    <MiniMusicCard song={song} loggedUser={loggedUserInfo} />
+                    <MiniMusicCard isSongInProfile={props.isInProfilePage} song={song} />
                 </div>
             ))}
         </div>

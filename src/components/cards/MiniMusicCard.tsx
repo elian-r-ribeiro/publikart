@@ -3,15 +3,16 @@
 import Song from "@/model/Song";
 import User from "@/model/User";
 import Playlist from "@/model/Playlist";
-import { IconMinus, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
+import { IconMinus, IconPlayerPlay, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
 import { addSongsToLoggedUserSavedSongs } from "@/services/SongsService";
 import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
 import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
+import { useCurrentUser } from "@/context/UserContext";
 
 interface MiniMusicCardProps {
     song: Song;
-    loggedUser: User;
+    isSongInProfile?: boolean;
     isSongInPlaylist?: boolean;
     isLoggedUserPlaylistOwner?: boolean;
     playlistId?: string;
@@ -20,10 +21,17 @@ interface MiniMusicCardProps {
 
 export default function MiniMusicCard(props: MiniMusicCardProps) {
 
+    const loggedUser = useCurrentUser();
+
+    if (!loggedUser) {
+        return <p>Carregando...</p>;
+    }
+
     const selectRef = useRef<HTMLDivElement | null>(null);
     const songRef = useRef<HTMLAudioElement | null>(null);
     const [showSelect, setShowSelect] = useState(false);
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const isUserSongOwner = props.song.artistUid === loggedUser.uid;
 
     function handleSongPlayAndPause() {
         songRef.current = new Audio(props.song.songUrl);
@@ -35,7 +43,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
 
         if (!playlistId) return;
         if (playlistId === "savedSongs") {
-            await addSongsToLoggedUserSavedSongs(props.loggedUser.uid, props.song.id);
+            await addSongsToLoggedUserSavedSongs(loggedUser!.uid, props.song.id);
             setShowSelect(false);
         } else {
             await saveSongToPlaylist(props.song.id, playlistId);
@@ -47,7 +55,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
         setShowSelect((prev) => !prev);
 
         if (!showSelect) {
-            const userPlaylists = await getDocumentsThatUserUidIsOwnerFromFirebase(props.loggedUser.uid, "playlists") as Playlist[];
+            const userPlaylists = await getDocumentsThatUserUidIsOwnerFromFirebase(loggedUser!.uid, "playlists") as Playlist[];
             setPlaylists(userPlaylists);
         }
     }
@@ -91,6 +99,12 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                     />
                     {props.isSongInPlaylist && props.isLoggedUserPlaylistOwner &&
                         <IconMinus
+                            onClick={handleMinusClick}
+                            className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
+                        />
+                    }
+                    {props.isSongInProfile && isUserSongOwner &&
+                        <IconTrash
                             onClick={handleMinusClick}
                             className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                         />

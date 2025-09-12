@@ -1,11 +1,12 @@
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
 import { addPlaylistToLoggedUserSavedPlaylists } from "@/services/PlaylistsService";
-import { IconDots, IconPlus } from "@tabler/icons-react";
+import { IconDots, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
 interface PlaylistCardProps {
     playlist: Playlist;
+    isPlaylistInProfile?: boolean;
 };
 
 export default function MiniPlaylistCard(props: PlaylistCardProps) {
@@ -21,7 +22,7 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
         await addPlaylistToLoggedUserSavedPlaylists(loggedUserInfo!.uid, props.playlist.id);
     }
 
-    async function goToPlaylistDetailsPage (){
+    async function goToPlaylistDetailsPage() {
         router.push(`/playlist/${props.playlist.id}`);
     }
 
@@ -30,14 +31,20 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
             <img src={props.playlist.imgUrl} alt="Playlist image" className="w-32 h-32 object-cover rounded-lg mb-2" />
             <h2 className="w-full text-center text-lg font-semibold truncate overflow-hidden whitespace-nowrap">{props.playlist.playlistTitle}</h2>
             <div className="flex justify-center">
-                <IconDots 
+                <IconDots
                     onClick={goToPlaylistDetailsPage}
-                    className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements" 
+                    className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                 />
                 <IconPlus
                     onClick={savePlaylist}
                     className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                 />
+                {props.isPlaylistInProfile &&
+                    <IconTrash
+                        onClick={() => { }}
+                        className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
+                    />
+                }
             </div>
         </div>
     );
