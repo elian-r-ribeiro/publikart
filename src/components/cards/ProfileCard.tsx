@@ -11,7 +11,11 @@ import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { updateUserProfile, updateUserProfileWithProfilePicture } from "@/services/UserService";
 import { logoutFromFirebase } from "@/services/AuthService";
 
-export default function ProfileCard() {
+interface ProfileCardProps {
+    userData: User;
+}
+
+export default function ProfileCard(props: ProfileCardProps) {
 
     type FormValues = {
         userName: string,
@@ -21,20 +25,15 @@ export default function ProfileCard() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const loggedUserData: User | null = useCurrentUser();
     const router = useRouter();
 
-    if (!loggedUserData) {
-        return <div>Carregando...</div>;
-    }
-
-    const isArtist = loggedUserData.isArtist;
+    const isArtist = props.userData.isArtist;
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         if (data.imageInput && data.imageInput.length > 0) {
-            await updateUserProfileWithProfilePicture(loggedUserData.uid, data.userName, data.isArtist, data.imageInput[0]!);
+            await updateUserProfileWithProfilePicture(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
         } else {
-            await updateUserProfile(loggedUserData.uid, data.userName, data.isArtist);
+            await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
         }
         window.location.reload();
     }
@@ -49,7 +48,7 @@ export default function ProfileCard() {
             <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-110 h-150 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
                 <DefaultImageInput
                     imageSrc={imageSrc ?? ""}
-                    defaultImageURL={loggedUserData.profilePictureURL}
+                    defaultImageURL={props.userData.profilePictureURL}
                     register={register}
                     setImageSrc={setImageSrc}
                     isRequired={false}
@@ -57,7 +56,7 @@ export default function ProfileCard() {
 
                 <input type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"
-                    placeholder="Nome de Usuário" defaultValue={loggedUserData.userName}
+                    placeholder="Nome de Usuário" defaultValue={props.userData.userName}
                     {...register("userName", { required: "Nome de usuário é obrigatório", minLength: { value: 6, message: "O nome de usuário deve ter no mínimo 6 caracteres" } })}
                 />
                 {errors.userName && <p>{errors.userName.message}</p>}
