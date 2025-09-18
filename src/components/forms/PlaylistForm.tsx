@@ -15,7 +15,11 @@ type FormValues = {
     isPrivate: boolean;
 };
 
-export default function PlaylistForm() {
+interface PlaylistFormProps {
+    playlistId?: string | null;
+}
+
+export default function PlaylistForm(props: PlaylistFormProps) {
 
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });

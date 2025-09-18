@@ -1,6 +1,6 @@
 import SongForm from "@/components/forms/SongForm";
 
-export default function UploadSong() {
+export default function UploadOrEditSong() {
     return (
         <div className="flex items-center justify-center h-screen w-screen gap-5">
             <SongForm />
