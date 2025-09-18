@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCuk8WB_dtnOoDb3KMgyXLcKHRhy0JvIDU",
-  authDomain: "publik-art.firebaseapp.com",
-  projectId: "publik-art",
-  storageBucket: "publik-art.firebasestorage.app",
-  messagingSenderId: "1099121368950",
-  appId: "1:1099121368950:web:d5ab8d91d002633103a457",
-  measurementId: "G-3DBBPFLVD5"
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: ""
 };
 
 const app = initializeApp(firebaseConfig);
