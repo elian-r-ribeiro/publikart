@@ -1,6 +1,6 @@
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
-import { addPlaylistToLoggedUserSavedPlaylists } from "@/services/PlaylistsService";
+import { addPlaylistToLoggedUserSavedPlaylists, deletePlaylistFromFirebase } from "@/services/PlaylistsService";
 import { IconDots, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
@@ -26,6 +26,10 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
         router.push(`/playlist/${props.playlist.id}`);
     }
 
+    async function deletePlaylist() {
+        await deletePlaylistFromFirebase(props.playlist.id, loggedUserInfo!.uid);
+    }
+
     return (
         <div className="centerItems defaultCardsSize bg-zinc-700/40 rounded-lg p-4 backdrop-blur changeScaleOnHoverDefaultStyle">
             <img src={props.playlist.imgUrl} alt="Playlist image" className="w-32 h-32 object-cover rounded-lg mb-2" />
@@ -41,7 +45,7 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
                 />
                 {props.isPlaylistInProfile &&
                     <IconTrash
-                        onClick={() => { }}
+                        onClick={deletePlaylist}
                         className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                     />
                 }

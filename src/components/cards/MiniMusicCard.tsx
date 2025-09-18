@@ -4,7 +4,7 @@ import Song from "@/model/Song";
 import Playlist from "@/model/Playlist";
 import { IconMinus, IconPlayerPlay, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
-import { addSongsToLoggedUserSavedSongs } from "@/services/SongsService";
+import { addSongsToLoggedUserSavedSongs, deleteSongFromFirebase } from "@/services/SongsService";
 import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
 import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
@@ -48,6 +48,10 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
             await saveSongToPlaylist(props.song.id, playlistId);
             setShowSelect(false);
         }
+    }
+
+    async function handleTrashClick() {
+        await deleteSongFromFirebase(props.song.id, loggedUser!.uid);
     }
 
     async function handlePlusClick() {
@@ -104,7 +108,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                     }
                     {props.isSongInProfile && isUserSongOwner &&
                         <IconTrash
-                            onClick={handleMinusClick}
+                            onClick={handleTrashClick}
                             className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                         />
                     }

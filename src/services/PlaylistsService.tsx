@@ -1,7 +1,34 @@
-import { addDoc, arrayRemove, arrayUnion, collection, doc, DocumentData, DocumentReference, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentData, DocumentReference, getDocs, updateDoc } from "firebase/firestore";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
 import Playlist from "@/model/Playlist";
+import { deleteObject, ref } from "firebase/storage";
+
+const deletePlaylistFromFirebase = async (playlistId: string, uid: string) => {
+    try {
+        await deleteDoc(doc(db, "playlists", playlistId));
+        await deleteObject(ref(storage, `playlistsImages/${playlistId}`));
+        await updateDoc(doc(db, "users", uid), {
+            userPlaylists: arrayRemove(playlistId)
+        });
+
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const promises: Promise<void>[] = [];
+
+        usersSnapshot.forEach((userDoc) => {
+            const userRef = doc(db, "users", userDoc.id);
+            promises.push(
+                updateDoc(userRef, {
+                    savedPlaylists: arrayRemove(playlistId)
+                })
+            );
+        });
+
+        await Promise.all(promises);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string) => {
     try {
@@ -109,5 +136,6 @@ export {
     getAllNonPrivatePlaylists,
     removeSongFromPlaylist,
     addPlaylistToLoggedUserSavedPlaylists,
-    getAllArtistNonPrivatePlaylists
+    getAllArtistNonPrivatePlaylists,
+    deletePlaylistFromFirebase
 }

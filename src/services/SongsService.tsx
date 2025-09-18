@@ -1,13 +1,40 @@
 import Song from "@/model/Song";
-import { addDoc, arrayUnion, collection, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase";
-import { getDownloadURL, ref, StorageReference } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, StorageReference } from "firebase/storage";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 
 const getDefaultSongURL = async () => {
     const defaultSongRef: StorageReference = ref(storage, "defaultSongs/DefaultSong.mp3");
     const defaultSongURL: string = await getDownloadURL(defaultSongRef);
     return defaultSongURL;
+}
+
+const deleteSongFromFirebase = async (songId: string, uid: string) => {
+    try {
+        await deleteObject(ref(storage, `songs/${songId}`));
+        await deleteObject(ref(storage, `songsImages/${songId}`));
+        await deleteDoc(doc(db, "songs", songId));
+        await updateDoc(doc(db, "users", uid), {
+            userSongs: arrayRemove(songId)
+        });
+
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const promises: Promise<void>[] = [];
+
+        usersSnapshot.forEach((userDoc) => {
+            const userRef = doc(db, "users", userDoc.id);
+            promises.push(
+                updateDoc(userRef, {
+                    savedSongs: arrayRemove(songId)
+                })
+            );
+        });
+
+        await Promise.all(promises);
+    } catch (error) {
+        console.log("Erro ao deletar música:", error);
+    }
 }
 
 const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
@@ -51,5 +78,6 @@ const addSongsToLoggedUserSavedSongs = async (uid: string, songId: string) => {
 export {
     getDefaultSongURL,
     uploadSongToFirebase,
-    addSongsToLoggedUserSavedSongs
+    addSongsToLoggedUserSavedSongs,
+    deleteSongFromFirebase
 }
