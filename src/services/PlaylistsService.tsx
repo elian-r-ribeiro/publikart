@@ -30,6 +30,31 @@ const deletePlaylistFromFirebase = async (playlistId: string, uid: string) => {
     }
 }
 
+const updatePlaylist = async (playlistId: string, playlistTitle: string, isPrivate: boolean, playlistDescription?: string, playlistImage?: File) => {
+    try {
+        const updatedData: Partial<Playlist> = {
+            playlistTitle: playlistTitle,
+            playlistDescription: playlistDescription,
+            isPrivate: isPrivate
+        }
+
+        if (playlistImage) {
+            await deleteObject(ref(storage, `playlistsImages/${playlistId}`));
+
+            const playlistImageUploadTaskWithRef = await uploadFileToFirebase(playlistImage, `playlistsImages/${playlistId}`);
+            const playlistImageDownloadUrl = await getDownloadURLByRef(playlistImageUploadTaskWithRef!);
+
+            updatedData.imgUrl = playlistImageDownloadUrl;
+        }
+
+        const playlistDocRef = doc(db, "playlists", playlistId);
+
+        updateDoc(playlistDocRef, updatedData);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string) => {
     try {
 
@@ -137,5 +162,6 @@ export {
     removeSongFromPlaylist,
     addPlaylistToLoggedUserSavedPlaylists,
     getAllArtistNonPrivatePlaylists,
-    deletePlaylistFromFirebase
+    deletePlaylistFromFirebase,
+    updatePlaylist
 }

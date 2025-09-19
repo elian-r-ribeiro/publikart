@@ -11,7 +11,7 @@ export default function ArtistProfileButtons() {
     }
 
     function goToCreatePlaylistPage() {
-        router.push("/createPlaylist/new");
+        router.push("/createOrEditPlaylist/new");
     }
 
     return (

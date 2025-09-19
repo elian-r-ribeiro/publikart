@@ -1,7 +1,7 @@
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
 import { addPlaylistToLoggedUserSavedPlaylists, deletePlaylistFromFirebase } from "@/services/PlaylistsService";
-import { IconDots, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconDots, IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
 interface PlaylistCardProps {
@@ -22,7 +22,11 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
         await addPlaylistToLoggedUserSavedPlaylists(loggedUserInfo!.uid, props.playlist.id);
     }
 
-    async function goToPlaylistDetailsPage() {
+    function goToEditPlaylist() {
+        router.push(`/createOrEditPlaylist/${props.playlist.id}`);
+    }
+
+    function goToPlaylistDetailsPage() {
         router.push(`/playlist/${props.playlist.id}`);
     }
 
@@ -44,10 +48,16 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
                     className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                 />
                 {props.isPlaylistInProfile &&
-                    <IconTrash
-                        onClick={deletePlaylist}
-                        className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
-                    />
+                    <div className="flex">
+                        <IconPencil
+                            className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
+                            onClick={goToEditPlaylist}
+                        />
+                        <IconTrash
+                            onClick={deletePlaylist}
+                            className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
+                        />
+                    </div>
                 }
             </div>
         </div>

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
-import { createPlaylist } from "@/services/PlaylistsService";
+import { createPlaylist, updatePlaylist } from "@/services/PlaylistsService";
+import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 
 type FormValues = {
     playlistTitle: string;
@@ -20,18 +21,60 @@ interface PlaylistFormProps {
 }
 
 export default function PlaylistForm(props: PlaylistFormProps) {
-
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
-
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const loggedUserInfo: User | null = useCurrentUser();
+
+    const fetchPlaylistData = async () => {
+        if (props.playlistId) {
+            const playlistData = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId);
+
+            if (playlistData) {
+                reset({
+                    playlistTitle: playlistData.playlistTitle || "",
+                    playlistDescription: playlistData.playlistDescription || "",
+                    isPrivate: playlistData.isPrivate
+                });
+                setImageSrc(playlistData.imgUrl);
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchPlaylistData();
+    }, [props.playlistId, reset]);
 
     if (!loggedUserInfo) {
         return <p>Carregando...</p>
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await createPlaylist(loggedUserInfo.uid, data.playlistTitle, data.imageInput[0], data.isPrivate, data.playlistDescription);
+        if (props.playlistId === "new") {
+            await createPlaylist(
+                loggedUserInfo.uid,
+                data.playlistTitle,
+                data.imageInput[0],
+                data.isPrivate,
+                data.playlistDescription
+            );
+        } else {
+            if (data.imageInput) {
+                await updatePlaylist(
+                    props.playlistId!,
+                    data.playlistTitle,
+                    data.isPrivate,
+                    data.playlistDescription,
+                    data.imageInput[0]
+                )
+            } else {
+                await updatePlaylist(
+                    props.playlistId!,
+                    data.playlistTitle,
+                    data.isPrivate,
+                    data.playlistDescription
+                )
+            }
+        }
     };
 
     return (
@@ -41,10 +84,12 @@ export default function PlaylistForm(props: PlaylistFormProps) {
                     imageSrc={imageSrc || ""}
                     setImageSrc={setImageSrc}
                     register={register}
-                    isRequired={true}
+                    isRequired={props.playlistId === "new"}
                 />
                 {errors.imageInput && <p>{errors.imageInput.message}</p>}
-                <input type="text"
+
+                <input
+                    type="text"
                     className="inputDefaultStyle changeScaleOnHoverDefaultStyle"
                     placeholder="Título da sua linda playlist"
                     {...register("playlistTitle", {
@@ -53,13 +98,28 @@ export default function PlaylistForm(props: PlaylistFormProps) {
                     })}
                 />
                 {errors.playlistTitle && <p>{errors.playlistTitle.message}</p>}
+
                 <div className="flex flex-col gap-2">
                     <p className="text-zinc-400 truncate overflow-hidden whitespace-nowrap">{loggedUserInfo.userName}</p>
                 </div>
 
-                <DefaultCheckboxInput defaultChecked={false} register={register} registerName="isPrivate" inputText="Playlist privada" />
+                <DefaultCheckboxInput
+                    defaultChecked={false}
+                    register={register}
+                    registerName="isPrivate"
+                    inputText="Playlist privada"
+                />
 
-                <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Criar playlist</button>
+                {props.playlistId === "new" &&
+                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">
+                        Criar playlist
+                    </button>
+                }
+                {props.playlistId != "new" &&
+                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">
+                        Salvar playlist
+                    </button>
+                }
             </form>
         </div>
     );
