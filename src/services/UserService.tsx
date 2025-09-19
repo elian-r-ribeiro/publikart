@@ -2,29 +2,26 @@ import { deleteObject, ref, StorageReference } from "firebase/storage";
 import { db, storage } from "../../firebase";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 import { doc, updateDoc } from "firebase/firestore";
+import User from "@/model/User";
 
-const updateUserProfileWithProfilePicture = async (uid: string, userName: string, isArtist: boolean, profilePicture: File) => {
+const updateUserProfile = async (uid: string, userName: string, isArtist: boolean, profilePicture?: File) => {
     try {
-        await updateUserProfile(uid, userName, isArtist);
+        const updatedData: Partial<User> = {
+            userName: userName,
+            isArtist: isArtist
+        }
 
-        const profilePictureRefToDelete: StorageReference = ref(storage, `profilePictures/${uid}`);
+        if (profilePicture) {
+            await deleteObject(ref(storage, `profilePictures/${uid}`));
 
-        await deleteObject(profilePictureRefToDelete);
+            const profilePictureUploadTaskWithRef = await uploadFileToFirebase(profilePicture, `profilePictures/${uid}`);
+            const profilePictureDownloadURL = await getDownloadURLByRef(profilePictureUploadTaskWithRef!);
 
-        const profilePicutreUploadTaskWithRef = await uploadFileToFirebase(profilePicture, `profilePictures/${uid}`);
-        const profilePictureDownloadURL = await getDownloadURLByRef(profilePicutreUploadTaskWithRef!);
+            updatedData.profilePictureURL = profilePictureDownloadURL;
+        }
+
         const loggedUserDocRef = doc(db, "users", uid);
-
-        await updateDoc(loggedUserDocRef, { profilePictureURL: profilePictureDownloadURL });
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const updateUserProfile = async (uid: string, userName: string, isArtist: boolean) => {
-    try {
-        const loggedUserDocRef = doc(db, "users", uid);
-        await updateDoc(loggedUserDocRef, { userName: userName, isArtist: isArtist });
+        await updateDoc(loggedUserDocRef, updatedData);
     } catch (error) {
         console.log(error);
     }
@@ -42,7 +39,6 @@ const changeUserPreferenceOption = async (uid: string) => {
 }
 
 export {
-    updateUserProfileWithProfilePicture,
     updateUserProfile,
     changeUserPreferenceOption
 }

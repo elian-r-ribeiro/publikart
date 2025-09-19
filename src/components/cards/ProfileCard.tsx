@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import User from "../../model/User";
 import { useCurrentUser } from "@/context/UserContext";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
-import { updateUserProfile, updateUserProfileWithProfilePicture } from "@/services/UserService";
+import { updateUserProfile } from "@/services/UserService";
 import { logoutFromFirebase } from "@/services/AuthService";
 
 interface ProfileCardProps {
@@ -31,7 +31,7 @@ export default function ProfileCard(props: ProfileCardProps) {
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         if (data.imageInput && data.imageInput.length > 0) {
-            await updateUserProfileWithProfilePicture(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
+            await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
         } else {
             await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
         }
