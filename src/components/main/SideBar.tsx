@@ -14,8 +14,8 @@ export default function SideBar() {
             <SideBarLabel label="Seus" />
             <SideBarItem link="/mySongs" iconName={IconMusicX} text="Suas Músicas" />
             <SideBarItem link="/savedSongs" iconName={IconMusicCheck} text="Músicas Salvas" />
+            <SideBarItem link="/myPlaylists" iconName={IconPlaylistX} text="Suas Playlists" />
             <SideBarItem link="/savedPlaylists" iconName={IconPlaylistAdd} text="Playlists Salvas" />
-            <SideBarItem link="/myPlaylists" iconName={IconPlaylistX} text="Minhas Playlists" />
             <SideBarLabel label="Outros" />
             <SideBarItem link="radio" iconName={IconRadio} text="Rádio" />
         </nav>
