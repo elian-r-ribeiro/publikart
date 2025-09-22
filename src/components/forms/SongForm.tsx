@@ -84,7 +84,14 @@ export default function SongForm(props: SongFormProps) {
                 />
                 {errors.songFile && <p>{errors.songFile.message}</p>}
 
-                <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Enviar música</button>
+                {props.songId === "new" &&
+                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">
+                        Enviar música
+                    </button>
+                }: <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">
+                    Salvar música
+                </button>
+
             </form>
         </div>
     );

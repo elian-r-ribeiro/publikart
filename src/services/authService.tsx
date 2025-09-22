@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -31,57 +31,66 @@ function getLoggedUserInfoHook() {
   return loggedUserData;
 }
 
+const sendPasswordRecovery = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const login = async (email: string, password: string): Promise<void> => {
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 const logoutFromFirebase = async () => {
-    try {
-        signOut(auth);
-    } catch (error) {
-        console.log(error);
-    }
+  try {
+    signOut(auth);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 const registerUser = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<void> => {
 
-    try {
-        const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
-        const registeredUser = userCredentials.user;
-        const uid = registeredUser.uid;
-        const profilePictureRef = await uploadFileToFirebase(profilePicture![0], `profilePictures/${uid}`);
-        const profilePictureUrl = await getDownloadURLByRef(profilePictureRef!);
+  try {
+    const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+    const registeredUser = userCredentials.user;
+    const uid = registeredUser.uid;
+    const profilePictureRef = await uploadFileToFirebase(profilePicture![0], `profilePictures/${uid}`);
+    const profilePictureUrl = await getDownloadURLByRef(profilePictureRef!);
 
-        await handleFirestoreUserDataRegister(uid, userName, profilePictureUrl);
-        await login(email, password);
-    } catch (error) {
-        console.log("Erro ao registrar: " + error);
-    }
+    await handleFirestoreUserDataRegister(uid, userName, profilePictureUrl);
+    await login(email, password);
+  } catch (error) {
+    console.log("Erro ao registrar: " + error);
+  }
 
 }
 
 const handleFirestoreUserDataRegister = async (uid: string, userName: string, profilePictureURL: string): Promise<void> => {
-    try {
-        const userData: Partial<User> = {
-            uid: uid,
-            userName: userName,
-            profilePictureURL: profilePictureURL,
-            isArtist: false
-        }
-
-        await setDoc(doc(db, "users", uid), userData);
-    } catch (error) {
-        console.log(error);
+  try {
+    const userData: Partial<User> = {
+      uid: uid,
+      userName: userName,
+      profilePictureURL: profilePictureURL,
+      isArtist: false
     }
+
+    await setDoc(doc(db, "users", uid), userData);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export {
-    registerUser,
-    login,
-    getLoggedUserInfoHook,
-    logoutFromFirebase
+  registerUser,
+  login,
+  getLoggedUserInfoHook,
+  logoutFromFirebase,
+  sendPasswordRecovery
 };
