@@ -7,7 +7,7 @@ export default function ArtistProfileButtons() {
     const router = useRouter();
 
     function goToUploadSongPage() {
-        router.push("/uploadSong");
+        router.push("/uploadOrEditSong/new");
     }
 
     function goToCreatePlaylistPage() {

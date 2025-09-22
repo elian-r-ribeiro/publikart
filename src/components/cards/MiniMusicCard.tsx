@@ -2,12 +2,13 @@
 
 import Song from "@/model/Song";
 import Playlist from "@/model/Playlist";
-import { IconMinus, IconPlayerPlay, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconMinus, IconPencil, IconPlayerPlay, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
 import { addSongsToLoggedUserSavedSongs, deleteSongFromFirebase } from "@/services/SongsService";
 import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
 import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 interface MiniMusicCardProps {
     song: Song;
@@ -26,6 +27,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
         return <p>Carregando...</p>;
     }
 
+    const router = useRouter();
     const selectRef = useRef<HTMLDivElement | null>(null);
     const songRef = useRef<HTMLAudioElement | null>(null);
     const [showSelect, setShowSelect] = useState(false);
@@ -48,6 +50,10 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
             await saveSongToPlaylist(props.song.id, playlistId);
             setShowSelect(false);
         }
+    }
+
+    async function handlePencilClick() {
+        router.push(`/uploadOrEditSong/${props.song.id}`);
     }
 
     async function handleTrashClick() {
@@ -103,6 +109,12 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                     {props.isSongInPlaylist && props.isLoggedUserPlaylistOwner &&
                         <IconMinus
                             onClick={handleMinusClick}
+                            className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
+                        />
+                    }
+                    {props.isSongInProfile && isUserSongOwner &&
+                        <IconPencil
+                            onClick={handlePencilClick}
                             className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                         />
                     }

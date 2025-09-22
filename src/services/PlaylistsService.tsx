@@ -49,7 +49,7 @@ const updatePlaylist = async (playlistId: string, playlistTitle: string, isPriva
 
         const playlistDocRef = doc(db, "playlists", playlistId);
 
-        updateDoc(playlistDocRef, updatedData);
+        await updateDoc(playlistDocRef, updatedData);
     } catch (error) {
         console.log(error);
     }

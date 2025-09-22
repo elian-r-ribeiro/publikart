@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
-import { uploadSongToFirebase } from "@/services/SongsService";
+import { updateSong, uploadSongToFirebase } from "@/services/SongsService";
+import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
+import Song from "@/model/Song";
 
 type FormValues = {
     songTitle: string;
@@ -13,19 +15,44 @@ type FormValues = {
     songFile: FileList;
 };
 
-export default function SongForm() {
+interface SongFormProps {
+    songId?: string
+}
 
+export default function SongForm(props: SongFormProps) {
+
+    const isSongImageAndFileRequired: boolean = props.songId === "new";
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
-
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const loggedUserInfo: User | null = useCurrentUser();
+
+    const fetchSongData = async () => {
+        if (props.songId) {
+            const songData: Song = await getSomethingFromFirebaseByDocumentId("songs", props.songId) as Song;
+
+            if (songData) {
+                reset({
+                    songTitle: songData.title
+                });
+                setImageSrc(songData.imgUrl);
+            }
+        }
+    }
+
+    useEffect(() => {
+        fetchSongData();
+    }, [props.songId, reset]);
 
     if (!loggedUserInfo) {
         return <p>Carregando...</p>
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        await uploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
+        if (props.songId === "new") {
+            await uploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
+        } else {
+            await updateSong(props.songId!, data.songTitle, data.imageInput[0], data.songFile[0]);
+        }
     };
 
     return (
@@ -35,7 +62,7 @@ export default function SongForm() {
                     imageSrc={imageSrc || ""}
                     setImageSrc={setImageSrc}
                     register={register}
-                    isRequired={true}
+                    isRequired={isSongImageAndFileRequired}
                 />
                 {errors.imageInput && <p>{errors.imageInput.message}</p>}
                 <input type="text"
@@ -53,7 +80,7 @@ export default function SongForm() {
                 <input
                     type="file"
                     className="fileInputDefaultStyle changeScaleOnHoverDefaultStyle"
-                    {...register("songFile", { required: "O arquivo da música é obrigatório" })}
+                    {...register("songFile", { required: isSongImageAndFileRequired ? "O arquivo da música é obrigatório" : false })}
                 />
                 {errors.songFile && <p>{errors.songFile.message}</p>}
 

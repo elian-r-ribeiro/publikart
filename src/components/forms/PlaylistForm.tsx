@@ -8,6 +8,7 @@ import User from "@/model/User";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { createPlaylist, updatePlaylist } from "@/services/PlaylistsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
+import Playlist from "@/model/Playlist";
 
 type FormValues = {
     playlistTitle: string;
@@ -27,7 +28,7 @@ export default function PlaylistForm(props: PlaylistFormProps) {
 
     const fetchPlaylistData = async () => {
         if (props.playlistId) {
-            const playlistData = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId);
+            const playlistData: Playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
 
             if (playlistData) {
                 reset({

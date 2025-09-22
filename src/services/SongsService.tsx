@@ -1,7 +1,7 @@
 import Song from "@/model/Song";
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase";
-import { deleteObject, getDownloadURL, ref, StorageReference } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 
 const getDefaultSongURL = async () => {
@@ -35,6 +35,34 @@ const deleteSongFromFirebase = async (songId: string, uid: string) => {
     } catch (error) {
         console.log("Erro ao deletar música:", error);
     }
+}
+
+const updateSong = async (songId: string, songTitle: string, songImage?: File, songFile?: File) => {
+    const updatedData: Partial<Song> = {
+        title: songTitle
+    }
+
+    if (songImage) {
+        await deleteObject(ref(storage, `songsImages/${songId}`));
+
+        const songImageUploadTaskWithRef = await uploadFileToFirebase(songImage, `songsImages/${songId}`);
+        const songImageDownloadUrl = await getDownloadURLByRef(songImageUploadTaskWithRef!);
+
+        updatedData.imgUrl = songImageDownloadUrl;
+    }
+
+    if (songFile) {
+        await deleteObject(ref(storage, `songs/${songId}`));
+
+        const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${songId}`);
+        const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
+
+        updatedData.songUrl = songFileDownloadURL;
+    }
+
+    const songDocRef = doc(db, "songs", songId);
+
+    await updateDoc(songDocRef, updatedData);
 }
 
 const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
@@ -79,5 +107,6 @@ export {
     getDefaultSongURL,
     uploadSongToFirebase,
     addSongsToLoggedUserSavedSongs,
-    deleteSongFromFirebase
+    deleteSongFromFirebase,
+    updateSong
 }
