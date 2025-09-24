@@ -1,21 +1,33 @@
 import { getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebase";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
-const getDocumentsThatUserUidIsOwnerFromFirebase = async(uid: string, collectionName: string) => {
+const searchDocumentByField = async (collectionName: string, fieldName: string, searchTerm: string) => {
+
+    const documentsRef = collection(db, collectionName);
+    const firestoreQuery = query(documentsRef, where(fieldName, ">=", searchTerm), where(fieldName, "<=", searchTerm + "\uf8ff"));
+    const docSnapshot = await getDocs(firestoreQuery);
+    const resultDocuments = docSnapshot.docs.map(doc => ({
+        ...doc.data()
+    }));
+
+    return resultDocuments;
+}
+
+const getDocumentsThatUserUidIsOwnerFromFirebase = async (uid: string, collectionName: string) => {
     const documentsArray: object[] = [];
 
-    try{
+    try {
         const collectionDocs = await getDocs(collection(db, collectionName));
 
         await Promise.all(collectionDocs.docs.map(async (doc) => {
             const data = doc.data();
 
-            if(data.artistUid === uid) {
-                documentsArray.push({...data});
+            if (data.artistUid === uid) {
+                documentsArray.push({ ...data });
             }
         }))
-    } catch(error){
+    } catch (error) {
         console.log(error)
     }
 
@@ -42,19 +54,19 @@ const getArrayOfDocumentsByDocIdsFromFirebase = async (idsArray: string[], colle
 
 const getEverythingFromOneCollection = async (collectionName: string) => {
     const allItemsArray: any[] = [];
-    
-        try {
-            const songsDocsRef = await getDocs(collection(db, collectionName));
-    
-            await Promise.all(songsDocsRef.docs.map(async (doc) => {
-                const data = doc.data();
-                allItemsArray.push({ ...data });
-            }));
-        } catch (error) {
-            console.log(error);
-        }
-    
-        return allItemsArray;
+
+    try {
+        const songsDocsRef = await getDocs(collection(db, collectionName));
+
+        await Promise.all(songsDocsRef.docs.map(async (doc) => {
+            const data = doc.data();
+            allItemsArray.push({ ...data });
+        }));
+    } catch (error) {
+        console.log(error);
+    }
+
+    return allItemsArray;
 }
 
 const getSomethingFromFirebaseByDocumentId = async (collectionName: string, documentId: string) => {
@@ -97,5 +109,6 @@ export {
     getSomethingFromFirebaseByDocumentId,
     getEverythingFromOneCollection,
     getArrayOfDocumentsByDocIdsFromFirebase,
-    getDocumentsThatUserUidIsOwnerFromFirebase
+    getDocumentsThatUserUidIsOwnerFromFirebase,
+    searchDocumentByField
 }
