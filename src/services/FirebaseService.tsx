@@ -4,11 +4,31 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 
 const searchDocumentByField = async (collectionName: string, fieldName: string, searchTerm: string) => {
 
+    let firestoreQuery: any = ""
     const documentsRef = collection(db, collectionName);
-    const firestoreQuery = query(documentsRef, where(fieldName, ">=", searchTerm), where(fieldName, "<=", searchTerm + "\uf8ff"));
+
+    if (collectionName === "playlists") {
+        firestoreQuery = query(documentsRef,
+            where(fieldName, ">=", searchTerm),
+            where(fieldName, "<=", searchTerm + "\uf8ff"),
+            where("isPrivate", "==", false)
+        );
+    } else if (collectionName === "users") {
+        firestoreQuery = query(documentsRef,
+            where(fieldName, ">=", searchTerm),
+            where(fieldName, "<=", searchTerm + "\uf8ff"),
+            where("isArtist", "==", true)
+        );
+    } else {
+        firestoreQuery = query(documentsRef,
+            where(fieldName, ">=", searchTerm),
+            where(fieldName, "<=", searchTerm + "\uf8ff")
+        );
+    }
+
     const docSnapshot = await getDocs(firestoreQuery);
     const resultDocuments = docSnapshot.docs.map(doc => ({
-        ...doc.data()
+        ...doc.data() as Object
     }));
 
     return resultDocuments;
