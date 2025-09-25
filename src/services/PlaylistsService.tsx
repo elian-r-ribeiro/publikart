@@ -34,6 +34,7 @@ const updatePlaylist = async (playlistId: string, playlistTitle: string, isPriva
     try {
         const updatedData: Partial<Playlist> = {
             playlistTitle: playlistTitle,
+            lowerCasePlaylistTitle: playlistTitle.toLowerCase(),
             playlistDescription: playlistDescription,
             isPrivate: isPrivate
         }
@@ -63,6 +64,7 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
         let playlistData: Partial<Playlist> = {
             artistUid: uid,
             playlistTitle: playlistTitle,
+            lowerCasePlaylistTitle: playlistTitle.toLowerCase(),
             playlistDescription: playlistDescription || "",
             isPrivate: isPrivate
         };

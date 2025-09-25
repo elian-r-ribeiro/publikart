@@ -63,6 +63,10 @@ body {
   @apply min-h-55 min-w-45 max-h-55 max-w-45
 }
 
+.defaultScrollableListOfItemsStyle {
+  @apply flex p-6 rounded-2xl bg-zinc-800/40 backdrop-blur gap-3 max-w-112 md:max-w-128 lg:max-w-256 overflow-x-auto pb-3
+}
+
 @keyframes visualizer1 {
     0% { height: 20%; }
     50% { height: 100%; }

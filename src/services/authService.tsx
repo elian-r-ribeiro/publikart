@@ -74,9 +74,11 @@ const registerUser = async (email: string, password: string, userName: string, p
 
 const handleFirestoreUserDataRegister = async (uid: string, userName: string, profilePictureURL: string): Promise<void> => {
   try {
+
     const userData: Partial<User> = {
       uid: uid,
       userName: userName,
+      lowerCaseUserName: userName.toLowerCase(),
       profilePictureURL: profilePictureURL,
       isArtist: false
     }

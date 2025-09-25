@@ -39,7 +39,8 @@ const deleteSongFromFirebase = async (songId: string, uid: string) => {
 
 const updateSong = async (songId: string, songTitle: string, songImage?: File, songFile?: File) => {
     const updatedData: Partial<Song> = {
-        title: songTitle
+        title: songTitle,
+        lowerCaseTitle: songTitle.toLowerCase()
     }
 
     if (songImage) {
@@ -69,6 +70,7 @@ const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: Fi
     try {
         let songData: Partial<Song> = {
             title: songTitle,
+            lowerCaseTitle: songTitle.toLowerCase(),
             artistUid: uid
         }
 

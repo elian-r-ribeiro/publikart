@@ -8,7 +8,7 @@ interface SearchArtistsProps {
 export default function SearchArtists(props: SearchArtistsProps) {
     return (
         <div>
-            <div className="flex gap-3 max-w-112 md:max-w-128 lg:max-w-256 overflow-x-auto pb-3">
+            <div className="defaultScrollableListOfItemsStyle">
                 {props.artists.map(artist => (
                     <div key={artist.uid} className="shrink-0">
                         <MiniArtistCard artist={artist} />

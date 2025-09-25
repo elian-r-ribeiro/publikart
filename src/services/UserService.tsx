@@ -6,8 +6,10 @@ import User from "@/model/User";
 
 const updateUserProfile = async (uid: string, userName: string, isArtist: boolean, profilePicture?: File) => {
     try {
+
         const updatedData: Partial<User> = {
             userName: userName,
+            lowerCaseUserName: userName.toLowerCase(),
             isArtist: isArtist
         }
 

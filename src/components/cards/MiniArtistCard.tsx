@@ -11,7 +11,7 @@ export default function MiniArtistCard(props: MiniArtistCardProps) {
     const router = useRouter();
 
     function goToArtistPage() {
-        router.push(`artists/${props.artist.uid}`);
+        router.push(`/artists/${props.artist.uid}`);
     }
 
     return (
