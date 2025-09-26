@@ -9,6 +9,7 @@ import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/Playlists
 import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { usePlayerContext } from "@/context/PlayerContext";
 
 interface MiniMusicCardProps {
     song: Song;
@@ -29,14 +30,14 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
 
     const router = useRouter();
     const selectRef = useRef<HTMLDivElement | null>(null);
-    const songRef = useRef<HTMLAudioElement | null>(null);
     const [showSelect, setShowSelect] = useState(false);
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const isUserSongOwner = props.song.artistUid === loggedUser.uid;
+    const { setSongsQueue, setIndex } = usePlayerContext();
 
     function handleSongPlayAndPause() {
-        songRef.current = new Audio(props.song.songUrl);
-        songRef.current.play();
+        setSongsQueue([props.song]);
+        setIndex(0);
     }
 
     async function handleSongSaving(e: React.ChangeEvent<HTMLSelectElement>) {

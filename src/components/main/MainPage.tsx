@@ -1,8 +1,11 @@
+'use client'
+
 import Footer from "./Footer";
 import Header from "./Header";
 import SideBar from "./SideBar";
 
 export default function MainPage(props: any) {
+
     return (
         <div className="h-screen flex flex-col justify-between">
             <Header />
