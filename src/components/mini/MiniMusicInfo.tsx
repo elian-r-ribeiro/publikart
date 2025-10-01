@@ -15,10 +15,12 @@ export default function MiniMusicInfo() {
     }, [currentSong]);
 
     const fetchSongOwnerInfo = async () => {
-        if (!currentSong) return;
-
-        const dataFromFirebase = await getSomethingFromFirebaseByDocumentId("users", currentSong!.artistUid) as User;
-        setSongOwner(dataFromFirebase);
+        if (!currentSong) {
+            setSongOwner(undefined);
+        } else {
+            const dataFromFirebase = await getSomethingFromFirebaseByDocumentId("users", currentSong!.artistUid) as User;
+            setSongOwner(dataFromFirebase);
+        };
     }
 
     return (

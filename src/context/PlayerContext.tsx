@@ -5,48 +5,47 @@ import Song from "@/model/Song";
 const PlayerContext = createContext<any>(null);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
-
     const [songsQueue, setSongsQueue] = useState<Song[]>([]);
     const [currentSong, setCurrentSong] = useState<Song>();
     const [currentIndex, setIndex] = useState<number>(0);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
     useEffect(() => {
+        if (!songsQueue.length) return;
 
-        if (songsQueue.length == 0) return;
-        if (audio) audio.pause();
+        if (audio) {
+            audio.pause();
+        }
 
-        setCurrentSong(songsQueue[currentIndex]);
+        const song = songsQueue[currentIndex];
+        if (!song) return;
 
-        let songUrl = songsQueue[currentIndex].songUrl;
-        let newAudio = new Audio(songUrl);
+        const newAudio = new Audio(song.songUrl);
         setAudio(newAudio);
+        setCurrentSong(song);
 
         newAudio.play();
 
         newAudio.onended = () => {
             if (currentIndex + 1 >= songsQueue.length) {
-                newAudio.pause();
-                newAudio.src = "";
+                setSongsQueue([]);
+                setIndex(0);
+                setAudio(null);
+                setCurrentSong(undefined);
             } else {
-                newAudio.pause();
-
                 setIndex(currentIndex + 1);
-                setCurrentSong(songsQueue[currentIndex]);
-
-                songUrl = songsQueue[currentIndex].songUrl;
-                newAudio.src = songUrl;
-
-                newAudio.play();
-
-                setAudio(newAudio);
             }
-        }
+        };
 
-    }, [songsQueue]);
+    }, [currentIndex, songsQueue]);
 
     return (
-        <PlayerContext.Provider value={{ currentSong, setCurrentSong, songsQueue, setSongsQueue, currentIndex, setIndex }}>
+        <PlayerContext.Provider value={{ 
+            currentSong, setCurrentSong, 
+            songsQueue, setSongsQueue, 
+            currentIndex, setIndex,
+            audio, setAudio
+        }}>
             {children}
         </PlayerContext.Provider>
     );
