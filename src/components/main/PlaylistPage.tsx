@@ -1,4 +1,4 @@
-import { IconPlayerPlay, IconPlus } from "@tabler/icons-react";
+import { IconArrowsRandom, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
@@ -6,6 +6,7 @@ import User from "@/model/User";
 import Song from "@/model/Song";
 import MiniMusicCard from "../cards/MiniMusicCard";
 import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
+import { usePlayerContext } from "@/context/PlayerContext";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -17,10 +18,24 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     const [playlistInfo, setPlaylistInfo] = useState<Playlist | null>(null);
     const [ownerInfo, setOwnerInfo] = useState<User | null>(null);
     const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
+    const [isRandom, setIsRandom] = useState<boolean>(false);
+    const { setSongsQueue, setIndex } = usePlayerContext();
 
     useEffect(() => {
         fetchPlaylistInfo();
     }, [props.playlistId, loggedUserInfo]);
+
+    const handlePlaylistPlay = () => {
+
+        const songsQueue: Song[] = []
+
+        playlistSongs.forEach(song => {
+            songsQueue.push(song);
+        });
+
+        setSongsQueue(songsQueue);
+        setIndex(0);
+    }
 
     const fetchPlaylistInfo = async () => {
         try {
@@ -43,6 +58,14 @@ export default function PlaylistPage(props: PlaylistPageProps) {
         setPlaylistSongs((prevSongs) => prevSongs.filter(song => song.id != songId));
     }
 
+    const changeIsRandom = () => {
+        if (isRandom) {
+            setIsRandom(false);
+        } else {
+            setIsRandom(true);
+        }
+    }
+
     const isLoggedUserPlaylistOwner = loggedUserInfo?.uid === playlistInfo?.artistUid;
 
     if (!loggedUserInfo || !playlistInfo) {
@@ -60,9 +83,20 @@ export default function PlaylistPage(props: PlaylistPageProps) {
                         <img className="w-5 h-5 rounded-full" src={ownerInfo?.profilePictureURL} alt="Artist image" />
                         <span className="text-sm">{ownerInfo?.userName}</span>
                     </div>
-                    <div className="flex">
+                    <div className="flex gap-3">
                         {!isLoggedUserPlaylistOwner && <IconPlus className="changeScaleOnHoverDefaultStyleForSmallerElements" />}
-                        <IconPlayerPlay className="changeScaleOnHoverDefaultStyleForSmallerElements" />
+                        <IconPlayerPlay onClick={handlePlaylistPlay} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
+                        {isRandom ? (
+                            <span className="text-blue-600">
+                                <IconArrowsRandom onClick={changeIsRandom} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
+                            </span>
+                        ) : (
+                            <span>
+                                <IconArrowsRandom onClick={changeIsRandom} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
+                            </span>
+                        )
+
+                        }
                     </div>
                 </div>
             </div>

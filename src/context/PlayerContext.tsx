@@ -18,15 +18,29 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
         setCurrentSong(songsQueue[currentIndex]);
 
-        const songUrl = songsQueue[currentIndex].songUrl;
-        const newAudio = new Audio(songUrl);
+        let songUrl = songsQueue[currentIndex].songUrl;
+        let newAudio = new Audio(songUrl);
         setAudio(newAudio);
 
         newAudio.play();
 
         newAudio.onended = () => {
-            newAudio.pause();
-            newAudio.src = "";
+            if (currentIndex + 1 >= songsQueue.length) {
+                newAudio.pause();
+                newAudio.src = "";
+            } else {
+                newAudio.pause();
+
+                setIndex(currentIndex + 1);
+                setCurrentSong(songsQueue[currentIndex]);
+
+                songUrl = songsQueue[currentIndex].songUrl;
+                newAudio.src = songUrl;
+
+                newAudio.play();
+
+                setAudio(newAudio);
+            }
         }
 
     }, [songsQueue]);
