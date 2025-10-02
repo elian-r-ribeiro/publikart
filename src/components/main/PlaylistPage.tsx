@@ -61,8 +61,8 @@ export default function PlaylistPage(props: PlaylistPageProps) {
 
             const songs = await getArrayOfDocumentsByDocIdsFromFirebase(playlist.songsIds ?? [], "songs") as Song[];
             setPlaylistSongs(songs ?? []);
-        } catch (err) {
-            console.error("Erro ao carregar playlist:", err);
+        } catch (error) {
+            console.error(error);
         }
     }
 
