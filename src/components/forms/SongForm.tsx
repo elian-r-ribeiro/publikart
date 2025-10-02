@@ -8,6 +8,7 @@ import User from "@/model/User";
 import { updateSong, uploadSongToFirebase } from "@/services/SongsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Song from "@/model/Song";
+import Loading from "../others/Loading";
 
 type FormValues = {
     songTitle: string;
@@ -44,7 +45,7 @@ export default function SongForm(props: SongFormProps) {
     }, [props.songId, reset]);
 
     if (!loggedUserInfo) {
-        return <p>Carregando...</p>
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {

@@ -3,6 +3,7 @@ import Playlist from "@/model/Playlist";
 import { addPlaylistToLoggedUserSavedPlaylists, deletePlaylistFromFirebase } from "@/services/PlaylistsService";
 import { IconDots, IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import Loading from "../others/Loading";
 
 interface PlaylistCardProps {
     playlist: Playlist;
@@ -15,7 +16,7 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
     const router = useRouter();
 
     if (!loggedUserInfo) {
-        return <p>Carregando...</p>;
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     async function savePlaylist() {

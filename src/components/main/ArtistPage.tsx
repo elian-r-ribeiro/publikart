@@ -6,6 +6,7 @@ import User from "@/model/User";
 import { useCurrentUser } from "@/context/UserContext";
 import ArtistSongs from "./ArtistSongs";
 import ArtistPlaylists from "./ArtistPlaylists";
+import Loading from "../others/Loading";
 
 interface ArtistPageProps {
     artistUid: string;
@@ -30,7 +31,7 @@ export default function ArtistPage(props: ArtistPageProps) {
     }
 
     if (!artistInfo || !loggedUser) {
-        return <p>Carregando...</p>
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

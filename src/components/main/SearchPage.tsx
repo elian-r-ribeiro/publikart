@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import SearchSongs from "./SearchSongs";
 import SearchPlaylists from "./SearchPlaylists";
 import SearchArtists from "./SearchArtists";
+import Loading from "../others/Loading";
 
 export default function SearchPage() {
     const params = useParams();
@@ -57,7 +58,7 @@ export default function SearchPage() {
     }
 
     if (loading) {
-        return <p>Carregando...</p>
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

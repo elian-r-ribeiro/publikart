@@ -3,13 +3,14 @@
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
 import Image from "next/image";
+import Loading from "../others/Loading";
 
 export default function MiniUserProfile() {
 
     const loggedUserData = useCurrentUser() as User;
 
     if (!loggedUserData) {
-        return <div>Carregando...</div>
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

@@ -9,6 +9,7 @@ import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { createPlaylist, updatePlaylist } from "@/services/PlaylistsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Playlist from "@/model/Playlist";
+import Loading from "../others/Loading";
 
 type FormValues = {
     playlistTitle: string;
@@ -25,6 +26,11 @@ export default function PlaylistForm(props: PlaylistFormProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const loggedUserInfo: User | null = useCurrentUser();
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        fetchPlaylistData();
+    }, [props.playlistId, reset]);
 
     const fetchPlaylistData = async () => {
         if (props.playlistId) {
@@ -41,12 +47,8 @@ export default function PlaylistForm(props: PlaylistFormProps) {
         }
     };
 
-    useEffect(() => {
-        fetchPlaylistData();
-    }, [props.playlistId, reset]);
-
     if (!loggedUserInfo) {
-        return <p>Carregando...</p>
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {

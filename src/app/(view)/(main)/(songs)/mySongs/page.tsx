@@ -1,6 +1,7 @@
 'use client'
 
 import MiniMusicCard from "@/components/cards/MiniMusicCard";
+import Loading from "@/components/others/Loading";
 import { useCurrentUser } from "@/context/UserContext";
 import Song from "@/model/Song";
 import User from "@/model/User";
@@ -22,7 +23,7 @@ export default function MySongs() {
     };
 
     if (!allLoggedUserSongsFromFirebase || !loggedUserInfo) {
-        return <p>Carregando...</p>;
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

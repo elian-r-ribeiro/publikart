@@ -5,6 +5,7 @@ import PreferenceOption from "../main/PreferenceOption";
 import { useRouter } from "next/navigation";
 import { changeUserPreferenceOption } from "@/services/UserService";
 import { useCurrentUser } from "@/context/UserContext";
+import Loading from "../others/Loading";
 
 export default function SelectPreferencesForm() {
 
@@ -12,7 +13,7 @@ export default function SelectPreferencesForm() {
     const loggedUserData = useCurrentUser();
 
     if (!loggedUserData) {
-        return <div>Carregando...</div>
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     const selectPreference = async (preference: string): Promise<void> => {

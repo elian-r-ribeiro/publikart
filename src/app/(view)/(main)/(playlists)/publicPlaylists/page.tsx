@@ -1,13 +1,14 @@
 'use client'
 
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
+import Loading from "@/components/others/Loading";
 import Playlist from "@/model/Playlist";
 import { getAllNonPrivatePlaylists } from "@/services/PlaylistsService";
 import { useEffect, useState } from "react";
 
 export default function PublicPlaylists() {
 
-    const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const [playlists, setPlaylists] = useState<Playlist[] | null>(null);
 
     useEffect(() => {
         fetchPlaylists();
@@ -17,6 +18,10 @@ export default function PublicPlaylists() {
         const nonPrivatePlaylists = await getAllNonPrivatePlaylists();
         setPlaylists(nonPrivatePlaylists);
     };
+
+    if (playlists === null) {
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
+    }
 
     return (
         <div className="flex justify-center">

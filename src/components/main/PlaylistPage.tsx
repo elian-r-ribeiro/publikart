@@ -7,6 +7,7 @@ import Song from "@/model/Song";
 import MiniMusicCard from "../cards/MiniMusicCard";
 import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import { usePlayerContext } from "@/context/PlayerContext";
+import Loading from "../others/Loading";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -81,7 +82,7 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     const isLoggedUserPlaylistOwner = loggedUserInfo?.uid === playlistInfo?.artistUid;
 
     if (!loggedUserInfo || !playlistInfo) {
-        return <p>Loading...</p>;
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

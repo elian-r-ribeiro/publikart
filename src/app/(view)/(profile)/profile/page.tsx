@@ -3,6 +3,7 @@
 import ProfileCard from "@/components/cards/ProfileCard";
 import ArtistPlaylists from "@/components/main/ArtistPlaylists";
 import ArtistSongs from "@/components/main/ArtistSongs";
+import Loading from "@/components/others/Loading";
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
 
@@ -11,7 +12,7 @@ export default function Profile() {
     const loggedUserData: User | null = useCurrentUser();
 
     if (!loggedUserData) {
-        return <div className="centerItems h-screen w-screen">Carregando...</div>;
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

@@ -1,6 +1,7 @@
 'use client'
 
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
+import Loading from "@/components/others/Loading";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
 import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
@@ -10,6 +11,7 @@ export default function MyPlaylists() {
 
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const loggedUserData = useCurrentUser();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetchPlaylists();
@@ -19,10 +21,11 @@ export default function MyPlaylists() {
         if (!loggedUserData) return;
         const loggedUserPlaylists = await getDocumentsThatUserUidIsOwnerFromFirebase(loggedUserData.uid, "playlists") as Playlist[];
         setPlaylists(loggedUserPlaylists);
+        setIsLoading(false);
     };
 
-    if (!loggedUserData || !playlists) {
-        return <div>Carregando...</div>;
+    if (isLoading) {
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />
     }
 
     return (

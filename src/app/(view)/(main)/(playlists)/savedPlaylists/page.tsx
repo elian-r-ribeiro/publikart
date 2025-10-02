@@ -1,6 +1,7 @@
 'use client'
 
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
+import Loading from "@/components/others/Loading";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
 import { getArrayOfDocumentsByDocIdsFromFirebase } from "@/services/FirebaseService";
@@ -16,13 +17,13 @@ export default function SavedPlaylists() {
     }, [loggedUserData]);
 
     const fetchPlaylists = async () => {
-        if(!loggedUserData) return;
+        if (!loggedUserData) return;
         const loggedUserPlaylists = await getArrayOfDocumentsByDocIdsFromFirebase(loggedUserData.savedPlaylists, "playlists") as Playlist[];
         setPlaylists(loggedUserPlaylists);
     };
 
     if (!loggedUserData || !playlists) {
-        return <div>Carregando...</div>;
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

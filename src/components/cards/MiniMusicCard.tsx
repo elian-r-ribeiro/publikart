@@ -10,6 +10,7 @@ import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseS
 import { useCurrentUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { usePlayerContext } from "@/context/PlayerContext";
+import Loading from "../others/Loading";
 
 interface MiniMusicCardProps {
     song: Song;
@@ -25,7 +26,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
     const loggedUser = useCurrentUser();
 
     if (!loggedUser) {
-        return <p>Carregando...</p>;
+        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     const router = useRouter();
