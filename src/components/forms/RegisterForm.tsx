@@ -26,7 +26,7 @@ export default function RegisterForm() {
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         await registerUser(data.email, data.password, data.userName, data.imageInput);
-        router.push("/login/selectPreferences");
+        router.push("/songs");
     };
 
     return (
