@@ -18,7 +18,7 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     const [playlistInfo, setPlaylistInfo] = useState<Playlist | null>(null);
     const [ownerInfo, setOwnerInfo] = useState<User | null>(null);
     const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
-    const [isRandom, setIsRandom] = useState<boolean>(false);
+    const [isRandomOrderActivated, setIsRandomOrderActivated] = useState<boolean>(false);
     const { setSongsQueue, setIndex } = usePlayerContext();
 
     useEffect(() => {
@@ -27,11 +27,23 @@ export default function PlaylistPage(props: PlaylistPageProps) {
 
     const handlePlaylistPlay = () => {
 
-        const songsQueue: Song[] = []
+        let songsQueue: Song[] = [];
+        const randomizedSongsQueue: Song[] = [];
 
         playlistSongs.forEach(song => {
             songsQueue.push(song);
         });
+
+        if (isRandomOrderActivated) {
+            while (songsQueue.length > 0) {
+                const randomIndex = Math.floor(Math.random() * songsQueue.length);
+
+                randomizedSongsQueue.push(songsQueue[randomIndex]);
+                songsQueue.splice(randomIndex, 1);
+            };
+
+            songsQueue = randomizedSongsQueue;
+        }
 
         setSongsQueue(songsQueue);
         setIndex(0);
@@ -59,10 +71,10 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     }
 
     const changeIsRandom = () => {
-        if (isRandom) {
-            setIsRandom(false);
+        if (isRandomOrderActivated) {
+            setIsRandomOrderActivated(false);
         } else {
-            setIsRandom(true);
+            setIsRandomOrderActivated(true);
         }
     }
 
@@ -86,7 +98,7 @@ export default function PlaylistPage(props: PlaylistPageProps) {
                     <div className="flex gap-3">
                         {!isLoggedUserPlaylistOwner && <IconPlus className="changeScaleOnHoverDefaultStyleForSmallerElements" />}
                         <IconPlayerPlay onClick={handlePlaylistPlay} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
-                        {isRandom ? (
+                        {isRandomOrderActivated ? (
                             <span className="text-blue-600">
                                 <IconArrowsRandom onClick={changeIsRandom} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
                             </span>
