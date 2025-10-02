@@ -2,6 +2,7 @@
 
 import MiniArtistCard from "@/components/cards/MiniArtistCard";
 import Loading from "@/components/others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 import User from "@/model/User";
 import { getEverythingFromOneCollection } from "@/services/FirebaseService";
 import { useEffect, useState } from "react";
@@ -9,24 +10,26 @@ import { useEffect, useState } from "react";
 export default function Artists() {
 
     const [allArtistsFromFirebase, setAllArtistsFromFirebase] = useState<User[] | null>(null);
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     useEffect(() => {
         fetchArtists();
     });
 
     const fetchArtists = async () => {
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
+
         const artists = await getEverythingFromOneCollection("users") as User[];
         setAllArtistsFromFirebase(artists);
-    }
 
-    if (!allArtistsFromFirebase) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
+        setIsLoading(false);
     }
 
     return (
         <div className="flex justify-center">
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
-                {allArtistsFromFirebase.map(artist => (
+                {allArtistsFromFirebase?.map(artist => (
                     <MiniArtistCard key={artist.uid} artist={artist} />
                 ))}
             </div>

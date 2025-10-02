@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import SearchSongs from "./SearchSongs";
 import SearchPlaylists from "./SearchPlaylists";
 import SearchArtists from "./SearchArtists";
-import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function SearchPage() {
     const params = useParams();
@@ -19,14 +19,15 @@ export default function SearchPage() {
     const [songs, setSongs] = useState<Song[]>([]);
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [artists, setArtists] = useState<User[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     useEffect(() => {
         fetchAllSearchedData();
     }, [searchTerm]);
 
     const fetchAllSearchedData = async () => {
-        setLoading(true);
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
 
         const fetchedSongs = await fetchSearchedSongs();
         const fetchedPlaylists = await fetchSearchedPlaylists();
@@ -36,7 +37,7 @@ export default function SearchPage() {
         setPlaylists(fetchedPlaylists);
         setArtists(fetchedArtists);
 
-        setLoading(false);
+        setIsLoading(false);
     }
 
     const fetchSearchedSongs = async () => {
@@ -55,10 +56,6 @@ export default function SearchPage() {
         const artists = await searchDocumentByField("users", "lowerCaseUserName", lowerCaseSearchTerm) as User[];
 
         return artists;
-    }
-
-    if (loading) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
     }
 
     return (

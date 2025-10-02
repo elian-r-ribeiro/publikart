@@ -8,6 +8,7 @@ import MiniMusicCard from "../cards/MiniMusicCard";
 import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import { usePlayerContext } from "@/context/PlayerContext";
 import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -21,6 +22,7 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
     const [isRandomOrderActivated, setIsRandomOrderActivated] = useState<boolean>(false);
     const { setSongsQueue, setIndex } = usePlayerContext();
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     useEffect(() => {
         fetchPlaylistInfo();
@@ -52,6 +54,10 @@ export default function PlaylistPage(props: PlaylistPageProps) {
 
     const fetchPlaylistInfo = async () => {
         try {
+
+            setLoadingMessage("Carregando...");
+            setIsLoading(true);
+
             const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
             if (!playlist) return;
 
@@ -62,6 +68,8 @@ export default function PlaylistPage(props: PlaylistPageProps) {
 
             const songs = await getArrayOfDocumentsByDocIdsFromFirebase(playlist.songsIds ?? [], "songs") as Song[];
             setPlaylistSongs(songs ?? []);
+
+            setIsLoading(false);
         } catch (error) {
             console.error(error);
         }
@@ -80,10 +88,6 @@ export default function PlaylistPage(props: PlaylistPageProps) {
     }
 
     const isLoggedUserPlaylistOwner = loggedUserInfo?.uid === playlistInfo?.artistUid;
-
-    if (!loggedUserInfo || !playlistInfo) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
-    }
 
     return (
         <div className="centerItems gap-6">

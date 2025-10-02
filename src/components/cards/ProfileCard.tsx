@@ -10,6 +10,7 @@ import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { updateUserProfile } from "@/services/UserService";
 import { logoutFromFirebase } from "@/services/AuthService";
 import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 interface ProfileCardProps {
     userData: User;
@@ -26,12 +27,14 @@ export default function ProfileCard(props: ProfileCardProps) {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     const isArtist = props.userData.isArtist;
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setLoadingMessage("Salvando...");
         setIsLoading(true);
+
         try {
             if (data.imageInput && data.imageInput.length > 0) {
                 await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
@@ -39,9 +42,10 @@ export default function ProfileCard(props: ProfileCardProps) {
                 await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
             }
         } finally {
-            setIsLoading(false);
         }
+
         window.location.reload();
+        setIsLoading(false);
     }
 
     const logout = async () => {
@@ -78,7 +82,6 @@ export default function ProfileCard(props: ProfileCardProps) {
                     >Logout</button>
                 </div>
             </form>
-            <Loading text="Salvando perfil..." show={isLoading} isSupposedToBeStatic={false} />
         </div>
     );
 }

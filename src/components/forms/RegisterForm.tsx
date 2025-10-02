@@ -6,6 +6,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { registerUser } from "@/services/AuthService";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function RegisterForm() {
 
@@ -18,15 +19,17 @@ export default function RegisterForm() {
     };
 
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
-
+    const { setIsLoading, setLoadingMessage } = useLoading();
     const router = useRouter();
     const password = watch("password");
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setLoadingMessage("Registrando usuário...");
+        setIsLoading(true);
         await registerUser(data.email, data.password, data.userName, data.imageInput);
         router.push("/songs");
+        setIsLoading(false);
     };
 
     return (

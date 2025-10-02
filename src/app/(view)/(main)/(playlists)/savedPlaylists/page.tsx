@@ -2,6 +2,7 @@
 
 import MiniPlaylistCard from "@/components/cards/MiniPlaylistCard";
 import Loading from "@/components/others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
 import { getArrayOfDocumentsByDocIdsFromFirebase } from "@/services/FirebaseService";
@@ -10,6 +11,7 @@ import { useEffect, useState } from "react";
 export default function SavedPlaylists() {
 
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const { setIsLoading, setLoadingMessage } = useLoading();
     const loggedUserData = useCurrentUser();
 
     useEffect(() => {
@@ -17,14 +19,15 @@ export default function SavedPlaylists() {
     }, [loggedUserData]);
 
     const fetchPlaylists = async () => {
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
+
         if (!loggedUserData) return;
         const loggedUserPlaylists = await getArrayOfDocumentsByDocIdsFromFirebase(loggedUserData.savedPlaylists, "playlists") as Playlist[];
         setPlaylists(loggedUserPlaylists);
-    };
 
-    if (!loggedUserData || !playlists) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
-    }
+        setIsLoading(false);
+    };
 
     return (
         <div className="flex justify-center">

@@ -2,6 +2,7 @@
 
 import MiniMusicCard from "@/components/cards/MiniMusicCard";
 import Loading from "@/components/others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 import { useCurrentUser } from "@/context/UserContext";
 import Song from "@/model/Song";
 import User from "@/model/User";
@@ -10,6 +11,7 @@ import { useState, useEffect } from "react";
 
 export default function MySongs() {
     const [allLoggedUserSongsFromFirebase, setAllLoggedUserSongsFromFirebase] = useState<Song[] | null>(null);
+    const { setIsLoading, setLoadingMessage } = useLoading();
     const loggedUserInfo: User | null = useCurrentUser();
 
     useEffect(() => {
@@ -17,19 +19,20 @@ export default function MySongs() {
     }, [loggedUserInfo]);
 
     const fetchSongs = async () => {
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
+
         if (!loggedUserInfo) return;
         const songs = await getArrayOfDocumentsByDocIdsFromFirebase(loggedUserInfo.userSongs, "songs") as Song[];
         setAllLoggedUserSongsFromFirebase(songs);
-    };
 
-    if (!allLoggedUserSongsFromFirebase || !loggedUserInfo) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
-    }
+        setIsLoading(false);
+    };
 
     return (
         <div className="flex justify-center">
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
-                {allLoggedUserSongsFromFirebase.map((song, index) => (
+                {allLoggedUserSongsFromFirebase?.map((song, index) => (
                     <MiniMusicCard key={index} song={song} />
                 ))}
             </div>

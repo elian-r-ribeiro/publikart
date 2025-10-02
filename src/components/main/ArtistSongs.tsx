@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Song from "@/model/Song";
 import User from "@/model/User";
 import { getArrayOfDocumentsByDocIdsFromFirebase } from "@/services/FirebaseService";
+import { useLoading } from "@/context/LoadingContext";
 
 interface ArtistSongsProps {
     artist: User;
@@ -13,17 +14,23 @@ interface ArtistSongsProps {
 export default function ArtistSongs(props: ArtistSongsProps) {
 
     const [artistSongs, setArtistSongs] = useState<Song[] | []>([]);
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     useEffect(() => {
         fetchArtistSongs();
     }, [props.artist]);
 
     const fetchArtistSongs = async () => {
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
+
         try {
             const userSongsFromFirebase = await getArrayOfDocumentsByDocIdsFromFirebase(props.artist.userSongs, "songs") as Song[];
             setArtistSongs(userSongsFromFirebase);
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 

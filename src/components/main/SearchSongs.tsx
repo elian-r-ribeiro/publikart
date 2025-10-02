@@ -1,5 +1,4 @@
 import MiniMusicCard from "../cards/MiniMusicCard";
-import MiniPlaylistCard from "../cards/MiniPlaylistCard";
 import Song from "@/model/Song";
 
 interface SearchSongsProps {

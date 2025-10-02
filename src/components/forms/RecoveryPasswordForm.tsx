@@ -2,7 +2,10 @@
 
 import { sendPasswordRecovery } from "@/services/AuthService";
 import Link from "next/link";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 type FormValues = {
     email: string
@@ -11,9 +14,13 @@ type FormValues = {
 export default function PasswordRecoveryForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setLoadingMessage("Enviado email...");
+        setIsLoading(true);
         await sendPasswordRecovery(data.email);
+        setIsLoading(false);
     }
 
     return (

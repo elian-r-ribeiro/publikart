@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
 import { PlayerProvider } from "@/context/PlayerContext";
+import { LoadingProvider } from "@/context/LoadingContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <UserProvider>
-          <PlayerProvider>
-            {children}
-          </PlayerProvider>
-        </UserProvider>
+        <LoadingProvider>
+          <UserProvider>
+            <PlayerProvider>
+              {children}
+            </PlayerProvider>
+          </UserProvider>
+        </LoadingProvider>
       </body>
-    </html>
+    </html >
   );
 }

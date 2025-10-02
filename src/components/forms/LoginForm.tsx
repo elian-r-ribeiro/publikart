@@ -5,10 +5,12 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import DefaultMusicComponent from "../main/DefaultMusicComponent";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function LoginForm() {
 
     const router = useRouter();
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     type FormValues = {
         email: string;
@@ -18,12 +20,11 @@ export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        try {
-            await login(data.email, data.password);
-            router.push("/songs")
-        } catch (error) {
-            console.log(error);
-        }
+        setLoadingMessage("Logando...");
+        setIsLoading(true);
+        await login(data.email, data.password);
+        router.push("/songs");
+        setIsLoading(false);
     };
 
     return (

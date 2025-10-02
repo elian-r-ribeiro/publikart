@@ -10,6 +10,7 @@ import { createPlaylist, updatePlaylist } from "@/services/PlaylistsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Playlist from "@/model/Playlist";
 import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 type FormValues = {
     playlistTitle: string;
@@ -25,14 +26,17 @@ interface PlaylistFormProps {
 export default function PlaylistForm(props: PlaylistFormProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
+    const { setIsLoading, setLoadingMessage } = useLoading();
     const loggedUserInfo: User | null = useCurrentUser();
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         fetchPlaylistData();
     }, [props.playlistId, reset]);
 
     const fetchPlaylistData = async () => {
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
+
         if (props.playlistId) {
             const playlistData: Playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
 
@@ -45,13 +49,18 @@ export default function PlaylistForm(props: PlaylistFormProps) {
                 setImageSrc(playlistData.imgUrl);
             }
         }
+
+        setIsLoading(false);
     };
 
     if (!loggedUserInfo) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />
+        return;
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setLoadingMessage("Salvando playlist...");
+        setIsLoading(true);
+
         if (props.playlistId === "new") {
             await createPlaylist(
                 loggedUserInfo.uid,
@@ -78,6 +87,7 @@ export default function PlaylistForm(props: PlaylistFormProps) {
                 )
             }
         }
+        setIsLoading(false);
     };
 
     return (

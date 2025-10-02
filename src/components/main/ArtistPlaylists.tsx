@@ -4,6 +4,7 @@ import { getAllArtistNonPrivatePlaylists } from "@/services/PlaylistsService";
 import { useEffect, useState } from "react";
 import MiniPlaylistCard from "../cards/MiniPlaylistCard";
 import { getArrayOfDocumentsByDocIdsFromFirebase } from "@/services/FirebaseService";
+import { useLoading } from "@/context/LoadingContext";
 
 interface ArtistPlaylistsProps {
     artist: User;
@@ -12,6 +13,7 @@ interface ArtistPlaylistsProps {
 export default function ArtistPlaylists(props: ArtistPlaylistsProps) {
 
     const [artistPlaylists, setArtistPlaylists] = useState<Playlist[] | []>([]);
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     useEffect(() => {
         fetchArtistPlaylists();
@@ -19,6 +21,9 @@ export default function ArtistPlaylists(props: ArtistPlaylistsProps) {
 
     const fetchArtistPlaylists = async () => {
         let userPlaylistsFromFirebase: Playlist[] | [] = [];
+
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
 
         try {
             if (!props.isInProfilePage) {
@@ -30,6 +35,8 @@ export default function ArtistPlaylists(props: ArtistPlaylistsProps) {
             setArtistPlaylists(userPlaylistsFromFirebase);
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 

@@ -9,6 +9,7 @@ import { updateSong, uploadSongToFirebase } from "@/services/SongsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Song from "@/model/Song";
 import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 type FormValues = {
     songTitle: string;
@@ -25,9 +26,17 @@ export default function SongForm(props: SongFormProps) {
     const isSongImageAndFileRequired: boolean = props.songId === "new";
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
+    const { setIsLoading, setLoadingMessage } = useLoading();
     const loggedUserInfo: User | null = useCurrentUser();
 
+    useEffect(() => {
+        fetchSongData();
+    }, [props.songId, reset]);
+
     const fetchSongData = async () => {
+        setLoadingMessage("Carregando...");
+        setIsLoading(true);
+
         if (props.songId) {
             const songData: Song = await getSomethingFromFirebaseByDocumentId("songs", props.songId) as Song;
 
@@ -38,22 +47,25 @@ export default function SongForm(props: SongFormProps) {
                 setImageSrc(songData.imgUrl);
             }
         }
+
+        setIsLoading(false);
     }
 
-    useEffect(() => {
-        fetchSongData();
-    }, [props.songId, reset]);
-
     if (!loggedUserInfo) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
+        return;
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setLoadingMessage("Salvando música...");
+        setIsLoading(true);
+
         if (props.songId === "new") {
             await uploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
         } else {
             await updateSong(props.songId!, data.songTitle, data.imageInput[0], data.songFile[0]);
         }
+
+        setIsLoading(false);
     };
 
     return (

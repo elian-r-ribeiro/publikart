@@ -7,6 +7,7 @@ import { useCurrentUser } from "@/context/UserContext";
 import ArtistSongs from "./ArtistSongs";
 import ArtistPlaylists from "./ArtistPlaylists";
 import Loading from "../others/Loading";
+import { useLoading } from "@/context/LoadingContext";
 
 interface ArtistPageProps {
     artistUid: string;
@@ -15,6 +16,7 @@ interface ArtistPageProps {
 export default function ArtistPage(props: ArtistPageProps) {
 
     const [artistInfo, setArtistInfo] = useState<User | null>(null);
+    const { setIsLoading, setLoadingMessage } = useLoading();
     const loggedUser = useCurrentUser();
 
     useEffect(() => {
@@ -23,15 +25,20 @@ export default function ArtistPage(props: ArtistPageProps) {
 
     const fetchArtistInfo = async () => {
         try {
+            setLoadingMessage("Carregando...");
+            setIsLoading(true);
+
             const artistInfoFromFirebase = await getSomethingFromFirebaseByDocumentId("users", props.artistUid) as User;
             setArtistInfo(artistInfoFromFirebase);
         } catch (error) {
             console.log(error)
+        } finally {
+            setIsLoading(false);
         }
     }
 
     if (!artistInfo || !loggedUser) {
-        return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
+        return;
     }
 
     return (
