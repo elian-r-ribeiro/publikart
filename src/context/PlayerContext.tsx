@@ -9,6 +9,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const [currentSong, setCurrentSong] = useState<Song>();
     const [currentIndex, setIndex] = useState<number>(0);
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+    const [volume, setVolume] = useState(1);
 
     useEffect(() => {
         if (!songsQueue.length) return;
@@ -21,6 +22,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         if (!song) return;
 
         const newAudio = new Audio(song.songUrl);
+        newAudio.volume = volume;
+
         setAudio(newAudio);
         setCurrentSong(song);
 
@@ -40,11 +43,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }, [currentIndex, songsQueue]);
 
     return (
-        <PlayerContext.Provider value={{ 
-            currentSong, setCurrentSong, 
-            songsQueue, setSongsQueue, 
+        <PlayerContext.Provider value={{
+            currentSong, setCurrentSong,
+            songsQueue, setSongsQueue,
             currentIndex, setIndex,
-            audio, setAudio
+            audio, setAudio,
+            volume, setVolume
         }}>
             {children}
         </PlayerContext.Provider>
