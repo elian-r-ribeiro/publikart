@@ -12,7 +12,7 @@ import { useLoading } from "@/context/LoadingContext";
 import PlaylistCard from "../cards/PlaylistCard";
 
 interface PlaylistPageProps {
-    playlistId: string
+    playlistId: string | undefined
 }
 
 export default function PlaylistPage(props: PlaylistPageProps) {
@@ -59,7 +59,7 @@ export default function PlaylistPage(props: PlaylistPageProps) {
             setLoadingMessage("Carregando...");
             setIsLoading(true);
 
-            const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId) as Playlist;
+            const playlist = await getSomethingFromFirebaseByDocumentId("playlists", props.playlistId!) as Playlist;
             if (!playlist) return;
 
             setPlaylistInfo(playlist);

@@ -44,7 +44,9 @@ const getDocumentsThatUserUidIsOwnerFromFirebase = async (uid: string, collectio
             const data = doc.data();
 
             if (data.artistUid === uid) {
-                documentsArray.push({ ...data });
+                if (data.isSavedSongs != true) {
+                    documentsArray.push({ ...data });
+                }
             }
         }))
     } catch (error) {
@@ -63,7 +65,9 @@ const getArrayOfDocumentsByDocIdsFromFirebase = async (idsArray: string[], colle
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                docsArray.push({ ...docSnap.data() });
+                if (docSnap.data().isSavedSongs != true) {
+                    docsArray.push({ ...docSnap.data() });
+                }
             }
         }));
     } catch (error) {

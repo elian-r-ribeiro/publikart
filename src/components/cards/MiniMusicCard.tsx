@@ -45,13 +45,8 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
         const playlistId = e.target.value;
 
         if (!playlistId) return;
-        if (playlistId === "savedSongs") {
-            await addSongsToLoggedUserSavedSongs(loggedUser!.uid, props.song.id);
-            setShowSelect(false);
-        } else {
-            await saveSongToPlaylist(props.song.id, playlistId);
-            setShowSelect(false);
-        }
+        await saveSongToPlaylist(props.song.id, playlistId);
+        setShowSelect(false);
     }
 
     async function handlePencilClick() {
@@ -134,7 +129,7 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
                         className="bg-zinc-800 text-white rounded p-1 w-49"
                     >
                         <option value="">Selecione uma playlist...</option>
-                        <option value="savedSongs">Músicas Salvas</option>
+                        <option value={loggedUser.savedSongsPlaylistId}>Músicas Salvas</option>
                         {playlists.map((playlist) => (
                             <option key={playlist.id} value={playlist.id}>
                                 {playlist.playlistTitle}

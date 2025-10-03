@@ -7,4 +7,5 @@ export default interface Playlist {
     artistUid: string;
     songsIds: string[];
     isPrivate: boolean;
+    isSavedSongs: boolean;
 };

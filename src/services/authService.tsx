@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import User from "@/model/User";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
+import { createPlaylist } from "./PlaylistsService";
 
 function getLoggedUserInfoHook() {
   const [loggedUserData, setLoggedUserData] = useState<any>(null);
@@ -65,9 +66,10 @@ const registerUser = async (email: string, password: string, userName: string, p
     const profilePictureUrl = await getDownloadURLByRef(profilePictureRef!);
 
     await handleFirestoreUserDataRegister(uid, userName, profilePictureUrl);
+    await createPlaylist(uid, "Músicas Salvas", profilePicture![0], true, "", true);
     await login(email, password);
   } catch (error) {
-    console.log("Erro ao registrar: " + error);
+    console.log(error);
   }
 
 }

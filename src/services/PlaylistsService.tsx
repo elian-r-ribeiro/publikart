@@ -56,7 +56,7 @@ const updatePlaylist = async (playlistId: string, playlistTitle: string, isPriva
     }
 }
 
-const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string) => {
+const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string, isSavedSongs?: boolean) => {
     try {
 
         const playlistOwnerDocRef = doc(db, "users", uid);
@@ -66,7 +66,8 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
             playlistTitle: playlistTitle,
             lowerCasePlaylistTitle: playlistTitle.toLowerCase(),
             playlistDescription: playlistDescription || "",
-            isPrivate: isPrivate
+            isPrivate: isPrivate,
+            isSavedSongs: isSavedSongs || false
         };
 
         const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "playlists"), playlistData);
@@ -79,8 +80,11 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
         }
 
         await updateDoc(createdDocumentRef, playlistData);
-
         await updateDoc(playlistOwnerDocRef, { userPlaylists: arrayUnion(playlistData.id) });
+
+        if (isSavedSongs) {
+            await updateDoc(playlistOwnerDocRef, { savedSongsPlaylistId: playlistData.id });
+        }
     } catch (error) {
         console.log(error);
     }

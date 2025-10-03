@@ -5,7 +5,7 @@ export default interface User {
     profilePictureURL: string;
     isArtist: boolean;
     userSongs: string[];
-    savedSongs: string[];
     userPlaylists: string[];
     savedPlaylists: string[];
+    savedSongsPlaylistId: string;
 };
