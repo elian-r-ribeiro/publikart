@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { registerUser } from "@/services/AuthService";
 import { useLoading } from "@/context/LoadingContext";
+import { useCurrentUser } from "@/context/UserContext";
 
 export default function RegisterForm() {
 
@@ -23,6 +24,13 @@ export default function RegisterForm() {
     const { setIsLoading, setLoadingMessage } = useLoading();
     const router = useRouter();
     const password = watch("password");
+    const loggedUser = useCurrentUser();
+
+    useEffect(() => {
+        if(loggedUser != null) {
+            router.push("/songs");
+        }
+    }, [loggedUser]);
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoadingMessage("Registrando usuário...");

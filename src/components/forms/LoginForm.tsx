@@ -6,11 +6,20 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import DefaultMusicComponent from "../main/DefaultMusicComponent";
 import { useLoading } from "@/context/LoadingContext";
+import { useCurrentUser } from "@/context/UserContext";
+import { useEffect } from "react";
 
 export default function LoginForm() {
 
     const router = useRouter();
     const { setIsLoading, setLoadingMessage } = useLoading();
+    const loggedUser = useCurrentUser();
+
+    useEffect(() => {
+        if(loggedUser != null) {
+            router.push("/songs");
+        }
+    }, [loggedUser]);
 
     type FormValues = {
         email: string;
