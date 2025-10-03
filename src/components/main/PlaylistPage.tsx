@@ -9,6 +9,7 @@ import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocu
 import { usePlayerContext } from "@/context/PlayerContext";
 import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
+import PlaylistCard from "../cards/PlaylistCard";
 
 interface PlaylistPageProps {
     playlistId: string
@@ -91,32 +92,14 @@ export default function PlaylistPage(props: PlaylistPageProps) {
 
     return (
         <div className="centerItems gap-6">
-            <div className="centerItemsRow gap-6 bg-zinc-700/40 backdrop-blur rounded-lg p-4 sm:w-64 md:w-128 lg:w-256">
-                <img className="w-32 h-32 rounded-lg" src={playlistInfo?.imgUrl} alt="Playlist image" />
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-3xl">{playlistInfo?.playlistTitle}</h1>
-                    <p className="text-lg">{playlistInfo?.playlistDescription}</p>
-                    <div className="flex gap-1">
-                        <img className="w-5 h-5 rounded-full" src={ownerInfo?.profilePictureURL} alt="Artist image" />
-                        <span className="text-sm">{ownerInfo?.userName}</span>
-                    </div>
-                    <div className="flex gap-3">
-                        {!isLoggedUserPlaylistOwner && <IconPlus className="changeScaleOnHoverDefaultStyleForSmallerElements" />}
-                        <IconPlayerPlay onClick={handlePlaylistPlay} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
-                        {isRandomOrderActivated ? (
-                            <span className="text-blue-600">
-                                <IconArrowsRandom onClick={changeIsRandom} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
-                            </span>
-                        ) : (
-                            <span>
-                                <IconArrowsRandom onClick={changeIsRandom} className="changeScaleOnHoverDefaultStyleForSmallerElements cursor-pointer" />
-                            </span>
-                        )
-
-                        }
-                    </div>
-                </div>
-            </div>
+            <PlaylistCard
+                changeIsRandom={changeIsRandom}
+                handlePlaylistPlay={handlePlaylistPlay}
+                isLoggedUserPlaylistOwner={isLoggedUserPlaylistOwner}
+                isRandomOrderActivated={isRandomOrderActivated}
+                ownerInfo={ownerInfo!}
+                playlistInfo={playlistInfo!}
+            />
             <div className="grid gridOfCardsResponsivityDefaultStyle gap-4">
                 {playlistSongs?.map(song => (
                     <MiniMusicCard

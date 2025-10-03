@@ -1,7 +1,6 @@
 'use client'
 
 import MiniArtistCard from "@/components/cards/MiniArtistCard";
-import Loading from "@/components/others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 import User from "@/model/User";
 import { getEverythingFromOneCollection } from "@/services/FirebaseService";
@@ -14,11 +13,13 @@ export default function Artists() {
 
     useEffect(() => {
         fetchArtists();
-    });
+    }, []);
 
     const fetchArtists = async () => {
         setLoadingMessage("Carregando...");
         setIsLoading(true);
+
+        console.log("a");
 
         const artists = await getEverythingFromOneCollection("users") as User[];
         setAllArtistsFromFirebase(artists);
