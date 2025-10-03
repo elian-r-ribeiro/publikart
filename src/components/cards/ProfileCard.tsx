@@ -77,7 +77,7 @@ export default function ProfileCard(props: ProfileCardProps) {
 
                 <div className="centerItems gap-2">
                     <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Salvar</button>
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black"
+                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="button"
                         onClick={logout}
                     >Logout</button>
                 </div>
