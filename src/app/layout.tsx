@@ -4,6 +4,7 @@ import "./globals.css";
 import { UserProvider } from "@/context/UserContext";
 import { PlayerProvider } from "@/context/PlayerContext";
 import { LoadingProvider } from "@/context/LoadingContext";
+import { MessageProvider } from "@/context/MessageContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,13 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <LoadingProvider>
-          <UserProvider>
-            <PlayerProvider>
-              {children}
-            </PlayerProvider>
-          </UserProvider>
-        </LoadingProvider>
+        <MessageProvider>
+          <LoadingProvider>
+            <UserProvider>
+              <PlayerProvider>
+                {children}
+              </PlayerProvider>
+            </UserProvider>
+          </LoadingProvider>
+        </MessageProvider>
       </body>
     </html >
   );
