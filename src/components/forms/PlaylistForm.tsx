@@ -11,6 +11,7 @@ import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService
 import Playlist from "@/model/Playlist";
 import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
+import { useMessage } from "@/context/MessageContext";
 
 type FormValues = {
     playlistTitle: string;
@@ -27,6 +28,7 @@ export default function PlaylistForm(props: PlaylistFormProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
+    const { setIsShow, setMessage } = useMessage();
     const loggedUserInfo: User | null = useCurrentUser();
 
     useEffect(() => {
@@ -88,6 +90,8 @@ export default function PlaylistForm(props: PlaylistFormProps) {
             }
         }
         setIsLoading(false);
+        setMessage("Playlist salva com sucesso!");
+        setIsShow(true);
     };
 
     return (

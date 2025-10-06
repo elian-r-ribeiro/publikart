@@ -10,6 +10,7 @@ import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService
 import Song from "@/model/Song";
 import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
+import { useMessage } from "@/context/MessageContext";
 
 type FormValues = {
     songTitle: string;
@@ -27,6 +28,7 @@ export default function SongForm(props: SongFormProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
+    const { setIsShow, setMessage } = useMessage();
     const loggedUserInfo: User | null = useCurrentUser();
 
     useEffect(() => {
@@ -66,6 +68,8 @@ export default function SongForm(props: SongFormProps) {
         }
 
         setIsLoading(false);
+        setMessage("Música salva com sucesso!");
+        setIsShow(true);
     };
 
     return (
