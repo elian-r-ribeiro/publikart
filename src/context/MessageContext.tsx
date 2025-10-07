@@ -9,11 +9,12 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
     const [show, setIsShow] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
+    const [onConfirmFunction, setOnConfirmFunction] = useState<any>(null);
 
     return (
-        <MessageContext.Provider value={{ setIsShow, setMessage }}>
+        <MessageContext.Provider value={{ setIsShow, setMessage, setOnConfirmFunction }}>
             {show && (
-                <Message message={message} setIsShow={setIsShow} />
+                <Message onConfirmFunction={onConfirmFunction} setOnConfirmFunction={setOnConfirmFunction} message={message} setIsShow={setIsShow} />
             )}
             {children}
         </MessageContext.Provider>

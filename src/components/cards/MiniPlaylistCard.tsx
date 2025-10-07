@@ -4,6 +4,8 @@ import { addPlaylistToLoggedUserSavedPlaylists, deletePlaylistFromFirebase } fro
 import { IconDots, IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import Loading from "../others/Loading";
+import { useMessage } from "@/context/MessageContext";
+import { useLoading } from "@/context/LoadingContext";
 
 interface PlaylistCardProps {
     playlist: Playlist;
@@ -14,6 +16,8 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
 
     const loggedUserInfo = useCurrentUser();
     const router = useRouter();
+    const { setIsLoading, setLoadingMessage } = useLoading();
+    const { setOnConfirmFunction, setIsShow, setMessage } = useMessage();
 
     if (!loggedUserInfo) {
         return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
@@ -31,8 +35,20 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
         router.push(`/playlist/${props.playlist.id}`);
     }
 
-    async function deletePlaylist() {
+    async function handlePlaylistDeletion() {
+        setMessage("Tem certeza que deseja excluir esta playlist permanentemente? Isso não pode ser desfeito.");
+        setOnConfirmFunction(() => onDeletionConfirmation);
+        setIsShow(true);
+    }   
+
+    async function onDeletionConfirmation() {
+        setLoadingMessage("Deletando...");
+        setIsLoading(true);
+
         await deletePlaylistFromFirebase(props.playlist.id, loggedUserInfo!.uid);
+
+        setIsLoading(false);
+        window.location.reload();
     }
 
     return (
@@ -55,7 +71,7 @@ export default function MiniPlaylistCard(props: PlaylistCardProps) {
                             onClick={goToEditPlaylist}
                         />
                         <IconTrash
-                            onClick={deletePlaylist}
+                            onClick={handlePlaylistDeletion}
                             className="cursor-pointer changeScaleOnHoverDefaultStyleForSmallerElements"
                         />
                     </div>

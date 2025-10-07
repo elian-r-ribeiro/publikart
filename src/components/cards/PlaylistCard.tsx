@@ -14,7 +14,7 @@ interface PlaylistCardProps {
 export default function PlaylistCard(props: PlaylistCardProps) {
     return (
         <div className="centerItemsRow gap-6 bg-zinc-700/40 backdrop-blur rounded-lg p-4 sm:w-64 md:w-128 lg:w-256">
-            <img className="w-32 h-32 rounded-lg" src={props.playlistInfo?.imgUrl} alt="Playlist image" />
+            <img className="w-32 h-32 rounded-lg object-cover" src={props.playlistInfo?.imgUrl} alt="Playlist image" />
             <div className="flex flex-col gap-1">
                 <h1 className="text-3xl">{props.playlistInfo?.playlistTitle}</h1>
                 <p className="text-lg">{props.playlistInfo?.playlistDescription}</p>

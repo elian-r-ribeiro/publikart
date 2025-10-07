@@ -4,13 +4,15 @@ import Song from "@/model/Song";
 import Playlist from "@/model/Playlist";
 import { IconMinus, IconPencil, IconPlayerPlay, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useRef, useState, useEffect } from "react";
-import { addSongsToLoggedUserSavedSongs, deleteSongFromFirebase } from "@/services/SongsService";
+import { deleteSongFromFirebase } from "@/services/SongsService";
 import { removeSongFromPlaylist, saveSongToPlaylist } from "@/services/PlaylistsService";
 import { getDocumentsThatUserUidIsOwnerFromFirebase } from "@/services/FirebaseService";
 import { useCurrentUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
 import { usePlayerContext } from "@/context/PlayerContext";
 import Loading from "../others/Loading";
+import { useMessage } from "@/context/MessageContext";
+import { useLoading } from "@/context/LoadingContext";
 
 interface MiniMusicCardProps {
     song: Song;
@@ -35,6 +37,8 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const isUserSongOwner = props.song.artistUid === loggedUser.uid;
     const { setSongsQueue, setIndex } = usePlayerContext();
+    const { setOnConfirmFunction, setIsShow, setMessage } = useMessage();
+    const { setIsLoading, setLoadingMessage } = useLoading();
 
     function handleSongPlayAndPause() {
         setSongsQueue([props.song]);
@@ -54,7 +58,19 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
     }
 
     async function handleTrashClick() {
+        setMessage("Tem certeza que deseja excluir esta música permanentemente? Isso não pode ser desfeito.");
+        setOnConfirmFunction(() => onDeleteConfirmation);
+        setIsShow(true);
+    }
+
+    async function onDeleteConfirmation() {
+        setLoadingMessage("Deletando...");
+        setIsLoading(true);
+
         await deleteSongFromFirebase(props.song.id, loggedUser!.uid);
+
+        setIsLoading(false);
+        window.location.reload();
     }
 
     async function handlePlusClick() {
@@ -67,8 +83,19 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
     }
 
     async function handleMinusClick() {
+        setMessage("Tem certeza que deseja remover esta música desta playlist?");
+        setOnConfirmFunction(() => onRemotionConfirmation);
+        setIsShow(true);
+    }
+
+    async function onRemotionConfirmation() {
+        setLoadingMessage("Removendo...");
+        setIsLoading(true);
+
         await removeSongFromPlaylist(props.song.id, props.playlistId!);
         props.onSongRemoved!(props.song.id);
+        
+        setIsLoading(false);
     }
 
     useEffect(() => {
