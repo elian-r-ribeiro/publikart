@@ -1,13 +1,12 @@
 'use client';
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DefaultImageInput from "../others/DefaultImageInput";
 import { registerUser } from "@/services/AuthService";
 import { useLoading } from "@/context/LoadingContext";
-import { useCurrentUser } from "@/context/UserContext";
+import { useMessage } from "@/context/MessageContext";
 
 export default function RegisterForm() {
 
@@ -22,22 +21,18 @@ export default function RegisterForm() {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
-    const router = useRouter();
+    const { setIsShow, setMessage } = useMessage();
     const password = watch("password");
-    const loggedUser = useCurrentUser();
-
-    useEffect(() => {
-        if(loggedUser != null) {
-            router.push("/songs");
-        }
-    }, [loggedUser]);
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoadingMessage("Registrando usuário...");
         setIsLoading(true);
+
         await registerUser(data.email, data.password, data.userName, data.imageInput);
-        router.push("/songs");
+
         setIsLoading(false);
+        setMessage("Se esse email existir, foi enviado um email de validação. Verifique sua caixa de spam.");
+        setIsShow(true);
     };
 
     return (

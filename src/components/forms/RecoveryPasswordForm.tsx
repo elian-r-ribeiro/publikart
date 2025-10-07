@@ -2,12 +2,8 @@
 
 import { sendPasswordRecovery } from "@/services/AuthService";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
-import { useCurrentUser } from "@/context/UserContext";
-import { useRouter } from "next/navigation";
 
 type FormValues = {
     email: string
@@ -17,14 +13,6 @@ export default function PasswordRecoveryForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
-    const router = useRouter();
-    const loggedUser = useCurrentUser();
-
-    useEffect(() => {
-        if(loggedUser != null) {
-            router.push("/songs");
-        }
-    }, [loggedUser]);
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoadingMessage("Enviado email...");

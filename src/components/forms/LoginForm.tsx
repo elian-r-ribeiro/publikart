@@ -1,25 +1,18 @@
 'use client'
 
-import { login } from "@/services/AuthService";
+import { logoutFromFirebase, tryLogin } from "@/services/AuthService";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import DefaultMusicComponent from "../main/DefaultMusicComponent";
 import { useLoading } from "@/context/LoadingContext";
-import { useCurrentUser } from "@/context/UserContext";
-import { useEffect } from "react";
+import { useMessage } from "@/context/MessageContext";
 
 export default function LoginForm() {
 
     const router = useRouter();
     const { setIsLoading, setLoadingMessage } = useLoading();
-    const loggedUser = useCurrentUser();
-
-    useEffect(() => {
-        if(loggedUser != null) {
-            router.push("/songs");
-        }
-    }, [loggedUser]);
+    const { setIsShow, setMessage } = useMessage();
 
     type FormValues = {
         email: string;
@@ -31,10 +24,21 @@ export default function LoginForm() {
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoadingMessage("Logando...");
         setIsLoading(true);
-        await login(data.email, data.password);
-        router.push("/songs");
+        const isPossibleToLogin = await tryLogin(data.email, data.password);
         setIsLoading(false);
+        validateIfIsPossibleToLogin(isPossibleToLogin);
     };
+
+    const validateIfIsPossibleToLogin = (isPossibleToLogin: boolean) => {
+        if (isPossibleToLogin) {
+            router.push("/songs");
+            setIsLoading(false);
+        } else {
+            setMessage("O email desta conta ainda não foi verificado. Um novo email foi enviado, confirme através do link para acessar sua conta.");
+            setIsShow(true);
+            logoutFromFirebase();
+        }
+    }
 
     return (
         <div className="centerItems h-screen">
