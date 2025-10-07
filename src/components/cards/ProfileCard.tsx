@@ -9,7 +9,6 @@ import User from "../../model/User";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { updateUserProfile } from "@/services/UserService";
 import { logoutFromFirebase } from "@/services/AuthService";
-import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 
 interface ProfileCardProps {
@@ -35,13 +34,10 @@ export default function ProfileCard(props: ProfileCardProps) {
         setLoadingMessage("Salvando...");
         setIsLoading(true);
 
-        try {
-            if (data.imageInput && data.imageInput.length > 0) {
-                await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
-            } else {
-                await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
-            }
-        } finally {
+        if (data.imageInput && data.imageInput.length > 0) {
+            await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
+        } else {
+            await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
         }
 
         window.location.reload();
