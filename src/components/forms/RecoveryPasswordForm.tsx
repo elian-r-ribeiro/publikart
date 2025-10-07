@@ -4,6 +4,7 @@ import { sendPasswordRecovery } from "@/services/AuthService";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoading } from "@/context/LoadingContext";
+import { useMessage } from "@/context/MessageContext";
 
 type FormValues = {
     email: string
@@ -13,12 +14,17 @@ export default function PasswordRecoveryForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
+    const { setIsShow, setMessage } = useMessage();
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoadingMessage("Enviado email...");
         setIsLoading(true);
+
         await sendPasswordRecovery(data.email);
+
         setIsLoading(false);
+        setMessage("Se este for um email registrado, um email de recuperação de senha será enviado. Verifique a caixa de spam.");
+        setIsShow(true);
     }
 
     return (
