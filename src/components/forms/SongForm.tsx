@@ -8,7 +8,6 @@ import User from "@/model/User";
 import { updateSong, uploadSongToFirebase } from "@/services/SongsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Song from "@/model/Song";
-import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
 
@@ -24,12 +23,12 @@ interface SongFormProps {
 
 export default function SongForm(props: SongFormProps) {
 
+    const loggedUserInfo: User | null = useCurrentUser();
     const isSongImageAndFileRequired: boolean = props.songId === "new";
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
-    const { setIsShow, setMessage } = useMessage();
-    const loggedUserInfo: User | null = useCurrentUser();
+    const { setIsShow, setMessage, setOptionalOnDismissFunction } = useMessage();
 
     useEffect(() => {
         fetchSongData();
@@ -68,9 +67,14 @@ export default function SongForm(props: SongFormProps) {
         }
 
         setIsLoading(false);
+        setOptionalOnDismissFunction(() => onDismissFunction);
         setMessage("Música salva com sucesso!");
         setIsShow(true);
     };
+
+    const onDismissFunction = () => {
+        window.location.reload();
+    }
 
     return (
         <div className="bg-zinc-700/20 w-110 h-110 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
