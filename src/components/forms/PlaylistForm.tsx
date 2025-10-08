@@ -28,7 +28,7 @@ export default function PlaylistForm(props: PlaylistFormProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({ mode: "onBlur" });
     const { setIsLoading, setLoadingMessage } = useLoading();
-    const { setIsShow, setMessage } = useMessage();
+    const { setIsShow, setMessage, setOptionalOnDismissFunction } = useMessage();
     const loggedUserInfo: User | null = useCurrentUser();
 
     useEffect(() => {
@@ -90,9 +90,14 @@ export default function PlaylistForm(props: PlaylistFormProps) {
             }
         }
         setIsLoading(false);
+        setOptionalOnDismissFunction(() => onDismissMessage);
         setMessage("Playlist salva com sucesso!");
         setIsShow(true);
     };
+
+    const onDismissMessage = () => {
+        window.location.reload();
+    }
 
     return (
         <div className="bg-zinc-700/20 w-110 h-110 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
