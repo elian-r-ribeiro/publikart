@@ -79,7 +79,7 @@ const tryRegisterUser = async (email: string, password: string, userName: string
     const profilePictureUrl = await getDownloadURLByRef(profilePictureRef!);
 
     await handleFirestoreUserDataRegister(uid, userName, profilePictureUrl);
-    await createPlaylist(uid, "Músicas Salvas", profilePicture![0], true, "", true);
+    await createPlaylist(uid, "Músicas Salvas", "https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png", true, "", true);
     await sendValidationEmail(registeredUser);
     await logoutFromFirebase();
     return { status: "success" }

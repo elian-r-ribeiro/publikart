@@ -56,10 +56,11 @@ const updatePlaylist = async (playlistId: string, playlistTitle: string, isPriva
     }
 }
 
-const createPlaylist = async (uid: string, playlistTitle: string, imageFile: File, isPrivate: boolean, playlistDescription?: string, isSavedSongs?: boolean) => {
+const createPlaylist = async (uid: string, playlistTitle: string, imageFileOrLink: File | string, isPrivate: boolean, playlistDescription?: string, isSavedSongs?: boolean) => {
     try {
 
         const playlistOwnerDocRef = doc(db, "users", uid);
+        let imageDownloadURL: string;
 
         let playlistData: Partial<Playlist> = {
             artistUid: uid,
@@ -71,8 +72,13 @@ const createPlaylist = async (uid: string, playlistTitle: string, imageFile: Fil
         };
 
         const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "playlists"), playlistData);
-        const imageUploadTaskWithRef = await uploadFileToFirebase(imageFile, `playlistsImages/${createdDocumentRef.id}`);
-        const imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
+        if (typeof (imageFileOrLink) === "string") {
+            imageDownloadURL = imageFileOrLink;
+        } else {
+            const imageUploadTaskWithRef = await uploadFileToFirebase(imageFileOrLink, `playlistsImages/${createdDocumentRef.id}`);
+            imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
+        }
+
 
         playlistData = {
             id: createdDocumentRef.id,
