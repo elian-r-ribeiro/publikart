@@ -6,6 +6,12 @@ import { User as FirebaseUserModel } from "firebase/auth";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 import { createPlaylist } from "./PlaylistsService";
 import User from "@/model/User";
+import { FirebaseError } from "firebase/app";
+
+type LoginOrRegisterResult =
+  | { status: "success" }
+  | { status: "unverified" }
+  | { status: "error"; code: string }
 
 function getLoggedUserInfoHook() {
   const [loggedUserData, setLoggedUserData] = useState<any>(null);
@@ -41,28 +47,29 @@ const sendPasswordRecovery = async (email: string) => {
   }
 }
 
-const tryLogin = async (email: string, password: string) => {
+const tryLogin = async (email: string, password: string): Promise<LoginOrRegisterResult> => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedUser = userCredential.user;
 
     return validateIfEmailIsVerifiedWhenSigningIn(loggedUser);
   } catch (error) {
-    console.log(error);
-    return false;
+    const err = error as FirebaseError;
+
+    return { status: "error", code: err.code };
   }
 }
 
-const validateIfEmailIsVerifiedWhenSigningIn = (user: FirebaseUserModel) => {
+const validateIfEmailIsVerifiedWhenSigningIn = async (user: FirebaseUserModel): Promise<LoginOrRegisterResult> => {
   if (!user.emailVerified) {
-    sendEmailVerification(user);
-    return false;
+    await sendEmailVerification(user);
+    return { status: "unverified" };
   } else {
-    return true;
+    return { status: "success" };
   }
 }
 
-const registerUser = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<void> => {
+const tryRegisterUser = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<LoginOrRegisterResult> => {
   try {
     const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -75,8 +82,11 @@ const registerUser = async (email: string, password: string, userName: string, p
     await createPlaylist(uid, "Músicas Salvas", profilePicture![0], true, "", true);
     await sendValidationEmail(registeredUser);
     await logoutFromFirebase();
+    return { status: "success" }
   } catch (error) {
-    console.log(error);
+    const err = error as FirebaseError;
+
+    return { status: "error", code: err.code };
   }
 
 }
@@ -114,7 +124,7 @@ const logoutFromFirebase = async () => {
 }
 
 export {
-  registerUser,
+  tryRegisterUser,
   tryLogin,
   getLoggedUserInfoHook,
   logoutFromFirebase,

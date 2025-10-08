@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DefaultImageInput from "../others/DefaultImageInput";
-import { registerUser } from "@/services/AuthService";
+import { tryRegisterUser } from "@/services/AuthService";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
 
@@ -28,12 +28,35 @@ export default function RegisterForm() {
         setLoadingMessage("Registrando usuário...");
         setIsLoading(true);
 
-        await registerUser(data.email, data.password, data.userName, data.imageInput);
+        const registerResult = await tryRegisterUser(data.email, data.password, data.userName, data.imageInput);
 
         setIsLoading(false);
-        setMessage("Se esse email existir, foi enviado um email de validação. Verifique sua caixa de spam.");
-        setIsShow(true);
+
+        switch (registerResult.status) {
+            case "success":
+                setMessage("Se esse email existir, foi enviado um email de validação. Verifique sua caixa de spam.");
+                setIsShow(true);
+                break;
+
+            case "error":
+                errorHandling(registerResult.code);
+                break;
+        }
+
     };
+
+    const errorHandling = (errorCode: string) => {
+        switch (errorCode) {
+            case "auth/email-already-in-use":
+                setMessage("O email informado já está registrado.");
+                break;
+            case "auth/invalid-email":
+                setMessage("O formato do email fornecido é inválido.");
+                break;
+        }
+
+        setIsShow(true);
+    }
 
     return (
         <div className="centerItems h-screen">

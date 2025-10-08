@@ -24,20 +24,36 @@ export default function LoginForm() {
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoadingMessage("Logando...");
         setIsLoading(true);
-        const isPossibleToLogin = await tryLogin(data.email, data.password);
+        const loginResult = await tryLogin(data.email, data.password);
         setIsLoading(false);
-        validateIfIsPossibleToLogin(isPossibleToLogin);
+
+        switch (loginResult.status) {
+            case "success":
+                router.push("/songs");
+                break;
+            case "unverified":
+                setMessage("Email não verificado. Um novo link de verificação foi enviado.");
+                setIsShow(false);
+                logoutFromFirebase();
+                break;
+            case "error":
+                errorHandling(loginResult.code);
+                break;
+        }
     };
 
-    const validateIfIsPossibleToLogin = (isPossibleToLogin: boolean) => {
-        if (isPossibleToLogin) {
-            router.push("/songs");
-            setIsLoading(false);
-        } else {
-            setMessage("O email desta conta ainda não foi verificado. Um novo email foi enviado, confirme através do link para acessar sua conta.");
-            setIsShow(true);
-            logoutFromFirebase();
+    const errorHandling = (errorCode: string) => {
+
+        switch (errorCode) {
+            case "auth/invalid-credential":
+                setMessage("Email ou(e) senha inválido(s).");
+                break;
+            case "auth/too-many-requests":
+                setMessage("Muitas requisições em pouco tempo. Tente novamente mais tarde.");
+                break;
         }
+
+        setIsShow(true);
     }
 
     return (
