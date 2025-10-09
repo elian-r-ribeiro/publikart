@@ -5,11 +5,12 @@ import DefaultImageInput from "../others/DefaultImageInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useCurrentUser } from "@/context/UserContext";
 import User from "@/model/User";
-import { updateSong, uploadSongToFirebase } from "@/services/SongsService";
+import { tryUpdateSong, tryUploadSongToFirebase } from "@/services/SongsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Song from "@/model/Song";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
+import { SongUploadResult } from "@/model/Types";
 
 type FormValues = {
     songTitle: string;
@@ -61,16 +62,41 @@ export default function SongForm(props: SongFormProps) {
         setIsLoading(true);
 
         if (props.songId === "new") {
-            await uploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
+            const songUploadTask = await tryUploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
+            validateSongUploadOrUpdate(songUploadTask);
+            setIsLoading(false);
         } else {
-            await updateSong(props.songId!, data.songTitle, data.imageInput[0], data.songFile[0]);
+            const songUpdateTask = await tryUpdateSong(props.songId!, data.songTitle, data.imageInput[0], data.songFile[0]);
+            validateSongUploadOrUpdate(songUpdateTask);
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
-        setOptionalOnDismissFunction(() => onDismissFunction);
-        setMessage("Música salva com sucesso!");
-        setIsShow(true);
     };
+
+    const validateSongUploadOrUpdate = (songUploadResult: SongUploadResult) => {
+        switch (songUploadResult.status) {
+            case "success": {
+                setOptionalOnDismissFunction(() => onDismissFunction);
+                setMessage("Música salva com sucesso!");
+                setIsShow(true);
+                break;
+            }
+            case "invalidSongImageFile": {
+                setMessage("Formato da imagem da música não suportado.");
+                setIsShow(true);
+                break;
+            }
+            case "invalidSongFile": {
+                setMessage("Formato do arquivo da música não suportado.");
+                setIsShow(true);
+                break;
+            }
+            default: {
+                setMessage("Erro inesperado.");
+                setIsShow(true);
+                break;
+            }
+        }
+    }
 
     const onDismissFunction = () => {
         window.location.reload();

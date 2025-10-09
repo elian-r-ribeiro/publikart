@@ -7,11 +7,7 @@ import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 import { createPlaylist } from "./PlaylistsService";
 import User from "@/model/User";
 import { FirebaseError } from "firebase/app";
-
-type LoginOrRegisterResult =
-  | { status: "success" }
-  | { status: "unverified" }
-  | { status: "error"; code: string }
+import { LoginOrRegisterResult } from "@/model/Types";
 
 function getLoggedUserInfoHook() {
   const [loggedUserData, setLoggedUserData] = useState<any>(null);

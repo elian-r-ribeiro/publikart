@@ -1,8 +1,11 @@
 import Song from "@/model/Song";
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase";
-import { deleteObject, getDownloadURL, ref, StorageReference, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, StorageReference } from "firebase/storage";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
+import { validateFileType } from "./CommomService";
+import { SongUploadResult } from "@/model/Types";
+import { FirebaseError } from "firebase/app";
 
 const getDefaultSongURL = async () => {
     const defaultSongRef: StorageReference = ref(storage, "defaultSongs/DefaultSong.mp3");
@@ -37,36 +40,55 @@ const deleteSongFromFirebase = async (songId: string, uid: string) => {
     }
 }
 
-const updateSong = async (songId: string, songTitle: string, songImage?: File, songFile?: File) => {
-    const updatedData: Partial<Song> = {
-        title: songTitle,
-        lowerCaseTitle: songTitle.toLowerCase()
+const tryUpdateSong = async (songId: string, songTitle: string, songImage?: File, songFile?: File): Promise<SongUploadResult> => {
+
+    try {
+        const songDocRef = doc(db, "songs", songId);
+
+        const updatedData: Partial<Song> = {
+            title: songTitle,
+            lowerCaseTitle: songTitle.toLowerCase()
+        }
+
+        if (songImage) {
+            const validateSongImageFile = validateFileType(songImage, "image");
+            if (validateSongImageFile.status === "validFile") {
+                await deleteObject(ref(storage, `songsImages/${songId}`));
+
+                const songImageUploadTaskWithRef = await uploadFileToFirebase(songImage, `songsImages/${songId}`);
+                const songImageDownloadUrl = await getDownloadURLByRef(songImageUploadTaskWithRef!);
+
+                updatedData.imgUrl = songImageDownloadUrl;
+            } else {
+                return { status: "invalidSongImageFile" }
+            }
+        }
+
+        if (songFile) {
+
+            const validateSongFile = validateFileType(songFile, "audio/mpeg");
+            if (validateSongFile.status === "validFile") {
+                await deleteObject(ref(storage, `songs/${songId}`));
+
+                const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${songId}`);
+                const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
+
+                updatedData.songUrl = songFileDownloadURL;
+            } else {
+                return { status: "invalidSongFile" }
+            }
+        }
+
+        await updateDoc(songDocRef, updatedData);
+        return { status: "success" }
+    } catch (error) {
+        const err = error as FirebaseError;
+
+        return { status: "error", code: err.code }
     }
-
-    if (songImage) {
-        await deleteObject(ref(storage, `songsImages/${songId}`));
-
-        const songImageUploadTaskWithRef = await uploadFileToFirebase(songImage, `songsImages/${songId}`);
-        const songImageDownloadUrl = await getDownloadURLByRef(songImageUploadTaskWithRef!);
-
-        updatedData.imgUrl = songImageDownloadUrl;
-    }
-
-    if (songFile) {
-        await deleteObject(ref(storage, `songs/${songId}`));
-
-        const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${songId}`);
-        const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
-
-        updatedData.songUrl = songFileDownloadURL;
-    }
-
-    const songDocRef = doc(db, "songs", songId);
-
-    await updateDoc(songDocRef, updatedData);
 }
 
-const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File) => {
+const tryUploadSongToFirebase = async (songTitle: string, uid: string, songFile: File, songImage: File): Promise<SongUploadResult> => {
     try {
         let songData: Partial<Song> = {
             title: songTitle,
@@ -76,8 +98,20 @@ const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: Fi
 
         const userDocRef: DocumentReference = doc(db, "users", uid);
         const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
+
+        const validateSongImageFile = validateFileType(songImage, "image");
+        if (validateSongImageFile.status === "invalidFile") {
+            return { status: "invalidSongImageFile" };
+        }
+
+        const validateSongFile = validateFileType(songFile, "audio/mpeg");
+        if (validateSongFile.status === "invalidFile") {
+            return { status: "invalidSongFile" };
+        }
+
         const imageUploadTaskWithRef = await uploadFileToFirebase(songImage, `songsImages/${createdDocumentRef.id}`);
         const imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
+
         const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${createdDocumentRef.id}`);
         const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
 
@@ -89,8 +123,11 @@ const uploadSongToFirebase = async (songTitle: string, uid: string, songFile: Fi
 
         await updateDoc(createdDocumentRef, songData);
         await updateDoc(userDocRef, { userSongs: arrayUnion(createdDocumentRef.id) });
+
+        return { status: "success" };
     } catch (error) {
-        console.log(error);
+        const err = error as FirebaseError;
+        return { status: "error", code: err.code }
     }
 }
 
@@ -107,8 +144,8 @@ const addSongsToLoggedUserSavedSongs = async (uid: string, songId: string) => {
 
 export {
     getDefaultSongURL,
-    uploadSongToFirebase,
+    tryUploadSongToFirebase,
     addSongsToLoggedUserSavedSongs,
     deleteSongFromFirebase,
-    updateSong
+    tryUpdateSong
 }
