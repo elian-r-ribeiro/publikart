@@ -4,10 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DefaultImageInput from "../others/DefaultImageInput";
-import { tryRegisterUser } from "@/services/AuthServiceHolder";
+import { tryRegisterUser } from "@/services/AuthService";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
-import { ProfileUpdateResult } from "@/model/Types";
 
 export default function RegisterForm() {
 

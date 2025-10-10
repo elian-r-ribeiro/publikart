@@ -1,6 +1,6 @@
 'use client'
 
-import { logoutFromFirebase, tryLogin } from "@/services/AuthServiceHolder";
+import { logoutFromFirebase, tryLogin } from "@/services/AuthService";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
