@@ -33,6 +33,27 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
   const { setOnConfirmFunction, setIsShow, setMessage } = useMessage();
   const { setIsLoading, setLoadingMessage } = useLoading();
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        selectRef.current &&
+        !selectRef.current.contains(event.target as Node)
+      ) {
+        setShowSelect(false);
+      }
+    }
+
+    if (showSelect) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSelect]);
+
   if (!loggedUser) {
     return <Loading isSupposedToBeStatic={true} text="Carregando..." />;
   }
@@ -93,24 +114,6 @@ export default function MiniMusicCard(props: MiniMusicCardProps) {
     props.onSongRemoved?.(props.song.id);
     setIsLoading(false);
   }
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setShowSelect(false);
-      }
-    }
-
-    if (showSelect) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showSelect]);
 
   return (
     <div className="centerItems defaultCardsSize bg-zinc-700/40 rounded-lg p-4 backdrop-blur changeScaleOnHoverDefaultStyle">
