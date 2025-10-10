@@ -32,8 +32,8 @@ export default function LoginForm() {
                 router.push("/songs");
                 break;
             case "unverified":
-                setMessage("Email não verificado. Um novo link de verificação foi enviado.");
-                setIsShow(false);
+                setMessage("Email não verificado. Um novo link de verificação foi enviado. Verifique a caixa de spam.");
+                setIsShow(true);
                 logoutFromFirebase();
                 break;
             case "error":
@@ -52,7 +52,6 @@ export default function LoginForm() {
                 setMessage("Muitas requisições em pouco tempo. Tente novamente mais tarde.");
                 break;
         }
-
         setIsShow(true);
     }
 

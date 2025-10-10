@@ -48,11 +48,11 @@ const tryLogin = async (email: string, password: string): Promise<LoginOrRegiste
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedUser = userCredential.user;
-
-    return validateIfEmailIsVerifiedWhenSigningIn(loggedUser);
+  
+    return await validateIfEmailIsVerifiedWhenSigningIn(loggedUser);
   } catch (error) {
+    console.log("chegou aqui");
     const err = error as FirebaseError;
-
     return { status: "error", code: err.code };
   }
 }
