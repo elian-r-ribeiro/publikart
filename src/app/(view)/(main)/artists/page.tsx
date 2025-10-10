@@ -19,7 +19,7 @@ export default function Artists() {
         setLoadingMessage("Carregando...");
         setIsLoading(true);
 
-        const artists = await getEverythingFromOneCollection("users") as User[];
+        const artists = await getEverythingFromOneCollection("users", "isArtist", true) as User[];
         setAllArtistsFromFirebase(artists);
 
         setIsLoading(false);

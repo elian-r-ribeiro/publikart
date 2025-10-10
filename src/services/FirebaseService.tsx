@@ -76,16 +76,26 @@ const getArrayOfDocumentsByDocIdsFromFirebase = async (idsArray: string[], colle
     return docsArray;
 }
 
-const getEverythingFromOneCollection = async (collectionName: string) => {
+const getEverythingFromOneCollection = async (collectionName: string, conditionName?: string, equalsTo?: any) => {
     const allItemsArray: any[] = [];
 
     try {
         const songsDocsRef = await getDocs(collection(db, collectionName));
 
-        await Promise.all(songsDocsRef.docs.map(async (doc) => {
-            const data = doc.data();
-            allItemsArray.push({ ...data });
-        }));
+        if(conditionName) {
+            await Promise.all(songsDocsRef.docs.map(async (doc) => {
+                const data = doc.data();
+
+                if(data[conditionName] === equalsTo) {
+                    allItemsArray.push({ ...data });
+                }
+            }));
+        } else {
+            await Promise.all(songsDocsRef.docs.map(async (doc) => {
+                const data = doc.data();
+                allItemsArray.push({ ...data });
+            }));
+        }
     } catch (error) {
         console.log(error);
     }
