@@ -97,9 +97,10 @@ const createPlaylist = async (
             isSavedSongs: isSavedSongs || false
         };
 
-        const createdDocumentRef: DocumentReference<DocumentData,DocumentData> = await addDoc(collection(db, "playlists"), playlistData);
+        let createdDocumentRef: DocumentReference<DocumentData,DocumentData>;
 
         if (typeof (imageFileOrLink) === "string") {
+            createdDocumentRef = await addDoc(collection(db, "playlists"), playlistData);
             imageDownloadURL = imageFileOrLink;
         } else {
             const validatePlaylistImage = validateFileType(imageFileOrLink, "image");
@@ -113,6 +114,7 @@ const createPlaylist = async (
             } else if (validatePlaylistImage.status === "invalidFile") {
                 return { status: "invalidPlaylistImageFile" }
             }
+            createdDocumentRef = await addDoc(collection(db, "playlists"), playlistData);
             const imageUploadTaskWithRef = await uploadFileToFirebase(imageFileOrLink, `playlistsImages/${createdDocumentRef.id}`);
             imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
             playlistData = {
