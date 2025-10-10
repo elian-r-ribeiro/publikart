@@ -1,6 +1,6 @@
 'use client'
 
-import { sendPasswordRecovery } from "@/services/AuthService";
+import { sendPasswordRecovery } from "@/services/AuthServiceHolder";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useLoading } from "@/context/LoadingContext";

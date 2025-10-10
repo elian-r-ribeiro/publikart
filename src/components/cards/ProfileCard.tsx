@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import User from "../../model/User";
 import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { updateUserProfile } from "@/services/UserService";
-import { logoutFromFirebase } from "@/services/AuthService";
+import { logoutFromFirebase } from "@/services/AuthServiceHolder";
 import { useLoading } from "@/context/LoadingContext";
 import { ProfileUpdateResult } from "@/model/Types";
 import { useMessage } from "@/context/MessageContext";

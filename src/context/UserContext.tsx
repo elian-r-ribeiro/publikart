@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useContext } from "react";
 import User from "@/model/User";
-import { getLoggedUserInfoHook } from "@/services/AuthService";
+import { getLoggedUserInfoHook } from "@/services/AuthServiceHolder";
 
 const UserContext = createContext<User | null>(null);
 
