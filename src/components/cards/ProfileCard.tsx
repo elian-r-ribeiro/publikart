@@ -37,13 +37,16 @@ export default function ProfileCard(props: ProfileCardProps) {
         setLoadingMessage("Salvando...");
         setIsLoading(true);
 
+        let profileUpdateTask;
+
         if (data.imageInput && data.imageInput.length > 0) {
-            const profileUpdateTask = await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
-            setIsLoading(false);
-            validateProfileUpdate(profileUpdateTask);
+            profileUpdateTask = await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
         } else {
-            await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
+            profileUpdateTask = await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
         }
+
+        setIsLoading(false);
+        validateProfileUpdate(profileUpdateTask);
     }
 
     const validateProfileUpdate = (profileUpdateResult: ProfileUpdateResult) => {

@@ -96,9 +96,6 @@ const tryUploadSongToFirebase = async (songTitle: string, uid: string, songFile:
             artistUid: uid
         }
 
-        const userDocRef: DocumentReference = doc(db, "users", uid);
-        const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
-
         const validateSongImageFile = validateFileType(songImage, "image");
         if (validateSongImageFile.status === "invalidFile") {
             return { status: "invalidSongImageFile" };
@@ -109,9 +106,10 @@ const tryUploadSongToFirebase = async (songTitle: string, uid: string, songFile:
             return { status: "invalidSongFile" };
         }
 
+        const userDocRef: DocumentReference = doc(db, "users", uid);
+        const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "songs"), songData);
         const imageUploadTaskWithRef = await uploadFileToFirebase(songImage, `songsImages/${createdDocumentRef.id}`);
         const imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
-
         const songFileUploadTaskWithRef = await uploadFileToFirebase(songFile, `songs/${createdDocumentRef.id}`);
         const songFileDownloadURL = await getDownloadURLByRef(songFileUploadTaskWithRef!);
 
