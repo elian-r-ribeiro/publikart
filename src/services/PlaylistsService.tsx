@@ -1,4 +1,4 @@
-import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentData, DocumentReference, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentData, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
 import { db, storage } from "../../firebase";
 import Playlist from "@/model/Playlist";
@@ -6,6 +6,7 @@ import { deleteObject, ref } from "firebase/storage";
 import { PlaylistUploadOrUpdateResult } from "@/model/Types";
 import { validateFileType } from "./CommomService";
 import { FirebaseError } from "firebase/app";
+import User from "@/model/User";
 
 const deletePlaylistFromFirebase = async (playlistId: string, uid: string) => {
     try {
@@ -33,8 +34,9 @@ const deletePlaylistFromFirebase = async (playlistId: string, uid: string) => {
     }
 }
 
-const updatePlaylist = async (playlistId: string, playlistTitle: string, isPrivate: boolean, playlistDescription?: string, playlistImage?: File): Promise<PlaylistUploadOrUpdateResult> => {
+const updatePlaylist = async (uid: string, playlistId: string, playlistTitle: string, isPrivate: boolean, playlistDescription?: string, playlistImage?: File): Promise<PlaylistUploadOrUpdateResult> => {
     try {
+        const userDocRef = doc(db, "users", uid);
         const updatedData: Partial<Playlist> = {
             playlistTitle: playlistTitle,
             lowerCasePlaylistTitle: playlistTitle.toLowerCase(),
@@ -44,16 +46,23 @@ const updatePlaylist = async (playlistId: string, playlistTitle: string, isPriva
 
         if (playlistImage) {
             const validatePlaylistImage = validateFileType(playlistImage, "image");
-            if (validatePlaylistImage.status === "validFile") {
-                await deleteObject(ref(storage, `playlistsImages/${playlistId}`));
-
-                const playlistImageUploadTaskWithRef = await uploadFileToFirebase(playlistImage, `playlistsImages/${playlistId}`);
-                const playlistImageDownloadUrl = await getDownloadURLByRef(playlistImageUploadTaskWithRef!);
-
-                updatedData.imgUrl = playlistImageDownloadUrl;
-            } else {
+            if (validatePlaylistImage.status === "invalidFile") {
                 return { status: "invalidPlaylistImageFile" }
+            } else if(validatePlaylistImage.status === "gif") {
+                const userDocSnap = await getDoc(userDocRef);
+                const userDocData = userDocSnap.data() as User;
+
+                if(userDocData.isSupporter === false) {
+                    return { status: "notASupporter" }
+                }
             }
+
+            await deleteObject(ref(storage, `playlistsImages/${playlistId}`));
+
+            const playlistImageUploadTaskWithRef = await uploadFileToFirebase(playlistImage, `playlistsImages/${playlistId}`);
+            const playlistImageDownloadUrl = await getDownloadURLByRef(playlistImageUploadTaskWithRef!);
+
+            updatedData.imgUrl = playlistImageDownloadUrl;
         }
 
         const playlistDocRef = doc(db, "playlists", playlistId);
@@ -92,19 +101,26 @@ const createPlaylist = async (
             imageDownloadURL = imageFileOrLink;
         } else {
             const validatePlaylistImage = validateFileType(imageFileOrLink, "image");
-            if (validatePlaylistImage.status === "validFile") {
-                const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "playlists"), playlistData);
-                const imageUploadTaskWithRef = await uploadFileToFirebase(imageFileOrLink, `playlistsImages/${createdDocumentRef.id}`);
-                imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
-                playlistData = {
-                    id: createdDocumentRef.id,
-                    imgUrl: imageDownloadURL
-                }
+            if (validatePlaylistImage.status === "gif") {
+                const userDocSnap = await getDoc(playlistOwnerDocRef);
+                const userDocData = userDocSnap.data() as User;
 
-                await updateDoc(createdDocumentRef, playlistData);
-            } else {
+                if(userDocData.isSupporter === false) {
+                    return { status: "notASupporter" }
+                }
+            } else if (validatePlaylistImage.status === "invalidFile") {
                 return { status: "invalidPlaylistImageFile" }
             }
+
+            const createdDocumentRef: DocumentReference<DocumentData, DocumentData> = await addDoc(collection(db, "playlists"), playlistData);
+            const imageUploadTaskWithRef = await uploadFileToFirebase(imageFileOrLink, `playlistsImages/${createdDocumentRef.id}`);
+            imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
+            playlistData = {
+                id: createdDocumentRef.id,
+                imgUrl: imageDownloadURL
+            }
+
+            await updateDoc(createdDocumentRef, playlistData);
         }
 
         await updateDoc(playlistOwnerDocRef, { userPlaylists: arrayUnion(playlistData.id) });

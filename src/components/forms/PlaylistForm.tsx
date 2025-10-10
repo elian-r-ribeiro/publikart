@@ -9,7 +9,6 @@ import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { createPlaylist, updatePlaylist } from "@/services/PlaylistsService";
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import Playlist from "@/model/Playlist";
-import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
 import { PlaylistUploadOrUpdateResult } from "@/model/Types";
@@ -69,10 +68,10 @@ export default function PlaylistForm(props: PlaylistFormProps) {
             validatePlaylistUploadOrUpdate(playlistUploadTask);
         } else {
             if (data.imageInput) {
-                const playlistUpdateTask = await updatePlaylist(props.playlistId!, data.playlistTitle, data.isPrivate, data.playlistDescription, data.imageInput[0])
+                const playlistUpdateTask = await updatePlaylist(loggedUserInfo.uid, props.playlistId!, data.playlistTitle, data.isPrivate, data.playlistDescription, data.imageInput[0])
                 validatePlaylistUploadOrUpdate(playlistUpdateTask);
             } else {
-                await updatePlaylist(props.playlistId!, data.playlistTitle, data.isPrivate, data.playlistDescription);
+                await updatePlaylist(loggedUserInfo.uid, props.playlistId!, data.playlistTitle, data.isPrivate, data.playlistDescription);
             }
         }
     };
@@ -89,6 +88,11 @@ export default function PlaylistForm(props: PlaylistFormProps) {
             }
             case "invalidPlaylistImageFile": {
                 setMessage("Formato da imagem da playlist não suportado.");
+                setIsShow(true);
+                break;
+            }
+            case "notASupporter": {
+                setMessage("O uso de GIFs é restrito apenas para apoiadores. Entre em contato com elianribeiro.contato@gmail.com ou em seu WhatsApp pessoal, se o possuir.");
                 setIsShow(true);
                 break;
             }

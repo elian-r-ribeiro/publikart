@@ -4,6 +4,7 @@ export default interface User {
     lowerCaseUserName: string;
     profilePictureURL: string;
     isArtist: boolean;
+    isSupporter: boolean;
     userSongs: string[];
     userPlaylists: string[];
     savedPlaylists: string[];

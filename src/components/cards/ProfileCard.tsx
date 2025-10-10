@@ -60,6 +60,11 @@ export default function ProfileCard(props: ProfileCardProps) {
                 setIsShow(true);
                 break;
             }
+            case "notASupporter": {
+                setMessage("O uso de GIFs é restrito apenas para apoiadores. Entre em contato com elianribeiro.contato@gmail.com ou em seu WhatsApp pessoal, se o possuir.");
+                setIsShow(true);
+                break;
+            }
             case "error": {
                 setMessage("Erro desconhecido");
                 setIsShow(true);

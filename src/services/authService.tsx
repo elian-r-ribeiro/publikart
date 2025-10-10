@@ -104,7 +104,8 @@ const handleFirestoreUserDataRegister = async (uid: string, userName: string, pr
       userName: userName,
       lowerCaseUserName: userName.toLowerCase(),
       profilePictureURL: profilePictureURL,
-      isArtist: false
+      isArtist: false,
+      isSupporter: false
     }
 
     await setDoc(doc(db, "users", uid), userData);

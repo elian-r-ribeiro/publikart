@@ -62,11 +62,11 @@ export default function SongForm(props: SongFormProps) {
         setIsLoading(true);
 
         if (props.songId === "new") {
-            const songUploadTask = await tryUploadSongToFirebase(data.songTitle, loggedUserInfo.uid, data.songFile[0], data.imageInput[0]);
+            const songUploadTask = await tryUploadSongToFirebase(loggedUserInfo.uid, data.songTitle, data.songFile[0], data.imageInput[0]);
             validateSongUploadOrUpdate(songUploadTask);
             setIsLoading(false);
         } else {
-            const songUpdateTask = await tryUpdateSong(props.songId!, data.songTitle, data.imageInput[0], data.songFile[0]);
+            const songUpdateTask = await tryUpdateSong(loggedUserInfo.uid, props.songId!, data.songTitle, data.imageInput[0], data.songFile[0]);
             validateSongUploadOrUpdate(songUpdateTask);
             setIsLoading(false);
         }
@@ -90,7 +90,12 @@ export default function SongForm(props: SongFormProps) {
                 setIsShow(true);
                 break;
             }
-            default: {
+            case "notASupporter": {
+                setMessage("O uso de GIFs é restrito apenas para apoiadores. Entre em contato com elianribeiro.contato@gmail.com ou em seu WhatsApp pessoal, se o possuir.");
+                setIsShow(true);
+                break;
+            }
+            case "error": {
                 setMessage("Erro inesperado.");
                 setIsShow(true);
                 break;

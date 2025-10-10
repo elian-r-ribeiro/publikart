@@ -1,7 +1,7 @@
 import { deleteObject, ref } from "firebase/storage";
 import { db, storage } from "../../firebase";
 import { getDownloadURLByRef, uploadFileToFirebase } from "./FirebaseService";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import User from "@/model/User";
 import { validateFileType } from "./CommomService";
 import { ProfileUpdateResult } from "@/model/Types";
@@ -10,6 +10,7 @@ import { FirebaseError } from "firebase/app";
 const updateUserProfile = async (uid: string, userName: string, isArtist: boolean, profilePicture?: File): Promise<ProfileUpdateResult> => {
     try {
 
+        const userDocRef = doc(db, "users", uid);
         const updatedData: Partial<User> = {
             userName: userName,
             lowerCaseUserName: userName.toLowerCase(),
@@ -26,13 +27,24 @@ const updateUserProfile = async (uid: string, userName: string, isArtist: boolea
                 const profilePictureDownloadURL = await getDownloadURLByRef(profilePictureUploadTaskWithRef!);
 
                 updatedData.profilePictureURL = profilePictureDownloadURL;
+            } else if(validadeProfilePictureFile.status === "gif") {
+                const userDocSnap = await getDoc(userDocRef);
+                const userDocData = userDocSnap.data();
+
+                if(userDocData!.isSupporter === false) {
+                    return { status: "notASupporter" }
+                } else {
+                    const profilePictureUploadTaskWithRef = await uploadFileToFirebase(profilePicture, `profilePictures/${uid}`);
+                    const profilePictureDownloadURL = await getDownloadURLByRef(profilePictureUploadTaskWithRef!);
+
+                    updatedData.profilePictureURL = profilePictureDownloadURL;
+                }
             } else {
                 return { status: "invalidProfilePictureFile" };
             }
         }
 
-        const loggedUserDocRef = doc(db, "users", uid);
-        await updateDoc(loggedUserDocRef, updatedData);
+        await updateDoc(userDocRef, updatedData);
         return { status: "success" }
     } catch (error) {
         const err = error as FirebaseError;
