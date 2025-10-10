@@ -28,7 +28,7 @@ const searchDocumentByField = async (collectionName: string, fieldName: string, 
 
     const docSnapshot = await getDocs(firestoreQuery);
     const resultDocuments = docSnapshot.docs.map(doc => ({
-        ...doc.data() as Object
+        ...doc.data() as object
     }));
 
     return resultDocuments;

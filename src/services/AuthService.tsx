@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { FirebaseError } from "firebase/app";
 import { LoginOrRegisterResult } from "@/model/Types";
 import { validateFileType } from "./CommomService";
 
-function getLoggedUserInfoHook() {
+function useLoggedUserInfoHook() {
   const [loggedUserData, setLoggedUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -133,7 +133,7 @@ const logoutFromFirebase = async () => {
 export {
   tryRegisterUser,
   tryLogin,
-  getLoggedUserInfoHook,
+  useLoggedUserInfoHook,
   logoutFromFirebase,
-  sendPasswordRecovery
+  sendPasswordRecovery,
 };
