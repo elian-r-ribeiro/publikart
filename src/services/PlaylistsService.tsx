@@ -117,11 +117,12 @@ const createPlaylist = async (
             createdDocumentRef = await addDoc(collection(db, "playlists"), playlistData);
             const imageUploadTaskWithRef = await uploadFileToFirebase(imageFileOrLink, `playlistsImages/${createdDocumentRef.id}`);
             imageDownloadURL = await getDownloadURLByRef(imageUploadTaskWithRef!);
-            playlistData = {
-                id: createdDocumentRef.id,
-                imgUrl: imageDownloadURL
-            }
         }
+
+        playlistData = {
+          id: createdDocumentRef.id,
+          imgUrl: imageDownloadURL,
+        };
 
         await updateDoc(createdDocumentRef, playlistData);
         await updateDoc(playlistOwnerDocRef, { userPlaylists: arrayUnion(playlistData.id) });
