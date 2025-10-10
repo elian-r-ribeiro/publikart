@@ -17,6 +17,10 @@ export default function Header() {
         goToSearchPage(data.searchTerm);
     }
 
+    const goToMobileNavBar = () => {
+        router.push("/mobileSideBar");
+    }
+
     const goToSearchPage = (searchTerm: string) => {
         router.push(`/search/${searchTerm}`);
     }
@@ -24,7 +28,7 @@ export default function Header() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="backdrop-blur h-20 flex flex-col justify-center items-center border-b border-zinc-700 gap-2">
             <div className="centerItemsRow gap-3">
-                <IconDots className="md:hidden lg:hidden" />
+                <IconDots onClick={goToMobileNavBar} className="md:hidden lg:hidden" />
                 <input
                     className="inputDefaultStyle"
                     type="text"

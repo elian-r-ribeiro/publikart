@@ -138,11 +138,11 @@ export default function PlaylistForm(props: PlaylistFormProps) {
                 />
 
                 {props.playlistId === "new" ? (
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">
+                    <button className="buttonDefaultStyle changeScaleOnHoverDefaultStyle" type="submit">
                         Criar playlist
                     </button>
                 ) : (
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">
+                    <button className="buttonDefaultStyle changeScaleOnHoverDefaultStyle" type="submit">
                         Salvar playlist
                     </button>
                 )}

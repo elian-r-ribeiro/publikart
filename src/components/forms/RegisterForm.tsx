@@ -120,7 +120,7 @@ export default function RegisterForm() {
                             })}
                         />
                         {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
-                        <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Registrar</button>
+                        <button className="buttonDefaultStyle changeScaleOnHoverDefaultStyle" type="submit">Registrar</button>
 
                         <Link href="/login" className="cursor-pointer changeScaleOnHoverDefaultStyle">
                             <span>Já tem uma conta? Logue aqui</span>

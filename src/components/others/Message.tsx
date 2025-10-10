@@ -26,19 +26,19 @@ export default function Message(props: MessageProps) {
                 {props.onConfirmFunction === null &&
                     <button
                         onClick={() => executeOptionalOnDismissFunction()}
-                        className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+                        className="buttonDefaultStyle px-4 py-2 changeScaleOnHoverDefaultStyle"
                     >Ok</button>
                 }
                 {props.onConfirmFunction != null &&
                     <div className="centerItemsRow p-4 gap-3">
                         <button
                             onClick={() => changeStatesOnConfirmFunction(true)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+                            className="buttonDefaultStyle px-4 py-2 changeScaleOnHoverDefaultStyle"
                         >Sim</button>
 
                         <button
                             onClick={() => changeStatesOnConfirmFunction(false)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+                            className="buttonDefaultStyle px-4 py-2 changeScaleOnHoverDefaultStyle"
                         >Não</button>
                     </div>
                 }

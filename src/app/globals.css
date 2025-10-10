@@ -36,7 +36,11 @@ body {
 }
 
 .inputDefaultStyle {
-  @apply bg-white/10 w-100 rounded-2xl h-10 text-center border-2 placeholder-white placeholder:opacity-70
+  @apply bg-white/10 w-70 md:w-100 rounded-2xl h-10 text-center border-2 placeholder-white placeholder:opacity-70
+}
+
+.buttonDefaultStyle {
+  @apply bg-white w-70 md:w-100 h-10 rounded-2xl cursor-pointer text-black
 }
 
 .fileInputDefaultStyle {

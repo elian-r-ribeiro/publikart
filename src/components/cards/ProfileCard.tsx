@@ -75,7 +75,7 @@ export default function ProfileCard(props: ProfileCardProps) {
 
     return (
         <div className="centerItems">
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-110 h-150 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-80 md:w-110 h-150 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
                 <DefaultImageInput
                     imageSrc={imageSrc ?? ""}
                     defaultImageURL={props.userData.profilePictureURL}
@@ -96,8 +96,8 @@ export default function ProfileCard(props: ProfileCardProps) {
                 <DefaultCheckboxInput defaultChecked={isArtist} register={register} registerName="isArtist" inputText="Sou compositor" />
 
                 <div className="centerItems gap-2">
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="submit">Salvar</button>
-                    <button className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black" type="button"
+                    <button className="buttonDefaultStyle changeScaleOnHoverDefaultStyle" type="submit">Salvar</button>
+                    <button className="buttonDefaultStyle changeScaleOnHoverDefaultStyle" type="button"
                         onClick={logout}
                     >Logout</button>
                 </div>

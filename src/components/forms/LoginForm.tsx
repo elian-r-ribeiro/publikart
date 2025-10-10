@@ -78,7 +78,7 @@ export default function LoginForm() {
                         )}
                     />
                     {errors.password && <p>{errors.password.message}</p>}
-                    <button type="submit" className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Login</button>
+                    <button type="submit" className="buttonDefaultStyle changeScaleOnHoverDefaultStyle">Login</button>
                 </form>
                 <Link href="/passwordRecovery" className="cursor-pointer changeScaleOnHoverDefaultStyle">
                     <span>Esqueceu sua senha? Recupere aqui</span>

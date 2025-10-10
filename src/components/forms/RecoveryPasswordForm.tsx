@@ -39,7 +39,7 @@ export default function PasswordRecoveryForm() {
                     />
                     {errors.email && <p>{errors.email.message}</p>}
                 </div>
-                <button type="submit" className="bg-white w-100 h-10 rounded-2xl cursor-pointer changeScaleOnHoverDefaultStyle text-black">Enviar</button>
+                <button type="submit" className="buttonDefaultStyle changeScaleOnHoverDefaultStyle">Enviar</button>
                 <Link href="/login" className="cursor-pointer changeScaleOnHoverDefaultStyle">
                     <span>Voltar para o Login</span>
                 </Link>
