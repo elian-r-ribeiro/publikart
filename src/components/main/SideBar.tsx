@@ -3,9 +3,23 @@ import SideBarItem from "./SideBarItem";
 import SideBarLabel from "./SideBarLabel";
 import MiniUserProfile from "../mini/MiniUserProfile";
 
-export default function SideBar() {
+interface SideBarProps {
+    isSupposedToBeHiddenOnSmallerScreens: boolean,
+    areItemsSupposedToBeCentered: boolean
+}
+
+export default function SideBar(props: SideBarProps) {
     return (
-        <nav className="hidden w-80 lg:flex flex-col gap-5 my-4 mx-4">
+        <nav className={`${props.isSupposedToBeHiddenOnSmallerScreens ? "hidden" : "flex"} 
+            ${props.areItemsSupposedToBeCentered ? "justify-center" : ""}
+            ${props.areItemsSupposedToBeCentered ? "items-center " : ""}
+            w-80 
+            lg:flex 
+            flex-col 
+            gap-5 
+            my-4 
+            mx-4`}
+        >
             <MiniUserProfile />
             <SideBarLabel label="Explorar" />
             <SideBarItem link="/songs" iconName={IconMusic} text="Músicas" />
