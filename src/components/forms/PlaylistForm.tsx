@@ -12,6 +12,7 @@ import Playlist from "@/model/Playlist";
 import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
+import { PlaylistUploadOrUpdateResult } from "@/model/Types";
 
 type FormValues = {
     playlistTitle: string;
@@ -64,36 +65,40 @@ export default function PlaylistForm(props: PlaylistFormProps) {
         setIsLoading(true);
 
         if (props.playlistId === "new") {
-            await createPlaylist(
-                loggedUserInfo.uid,
-                data.playlistTitle,
-                data.imageInput[0],
-                data.isPrivate,
-                data.playlistDescription
-            );
+            const playlistUploadTask = await createPlaylist(loggedUserInfo.uid, data.playlistTitle, data.imageInput[0], data.isPrivate, data.playlistDescription);
+            validatePlaylistUploadOrUpdate(playlistUploadTask);
         } else {
             if (data.imageInput) {
-                await updatePlaylist(
-                    props.playlistId!,
-                    data.playlistTitle,
-                    data.isPrivate,
-                    data.playlistDescription,
-                    data.imageInput[0]
-                )
+                const playlistUpdateTask = await updatePlaylist(props.playlistId!, data.playlistTitle, data.isPrivate, data.playlistDescription, data.imageInput[0])
+                validatePlaylistUploadOrUpdate(playlistUpdateTask);
             } else {
-                await updatePlaylist(
-                    props.playlistId!,
-                    data.playlistTitle,
-                    data.isPrivate,
-                    data.playlistDescription
-                )
+                await updatePlaylist(props.playlistId!, data.playlistTitle, data.isPrivate, data.playlistDescription);
             }
         }
-        setIsLoading(false);
-        setOptionalOnDismissFunction(() => onDismissMessage);
-        setMessage("Playlist salva com sucesso!");
-        setIsShow(true);
     };
+
+    const validatePlaylistUploadOrUpdate = (playlistUploadResult: PlaylistUploadOrUpdateResult) => {
+
+        setIsLoading(false);
+        switch (playlistUploadResult.status) {
+            case "success": {
+                setOptionalOnDismissFunction(() => onDismissMessage);
+                setMessage("Playlist salva com sucesso!");
+                setIsShow(true);
+                break;
+            }
+            case "invalidPlaylistImageFile": {
+                setMessage("Formato da imagem da playlist não suportado.");
+                setIsShow(true);
+                break;
+            }
+            case "error": {
+                setMessage("Erro desconhecido.");
+                setIsShow(true);
+                break;
+            }
+        }
+    }
 
     const onDismissMessage = () => {
         window.location.reload();

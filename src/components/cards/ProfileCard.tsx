@@ -10,6 +10,8 @@ import DefaultCheckboxInput from "../others/DefaultCheckboxInput";
 import { updateUserProfile } from "@/services/UserService";
 import { logoutFromFirebase } from "@/services/AuthService";
 import { useLoading } from "@/context/LoadingContext";
+import { ProfileUpdateResult } from "@/model/Types";
+import { useMessage } from "@/context/MessageContext";
 
 interface ProfileCardProps {
     userData: User;
@@ -27,6 +29,7 @@ export default function ProfileCard(props: ProfileCardProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const router = useRouter();
     const { setIsLoading, setLoadingMessage } = useLoading();
+    const { setIsShow, setMessage } = useMessage();
 
     const isArtist = props.userData.isArtist;
 
@@ -35,13 +38,31 @@ export default function ProfileCard(props: ProfileCardProps) {
         setIsLoading(true);
 
         if (data.imageInput && data.imageInput.length > 0) {
-            await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
+            const profileUpdateTask = await updateUserProfile(props.userData.uid, data.userName, data.isArtist, data.imageInput[0]!);
+            setIsLoading(false);
+            validateProfileUpdate(profileUpdateTask);
         } else {
             await updateUserProfile(props.userData.uid, data.userName, data.isArtist);
         }
+    }
 
-        window.location.reload();
-        setIsLoading(false);
+    const validateProfileUpdate = (profileUpdateResult: ProfileUpdateResult) => {
+        switch (profileUpdateResult.status) {
+            case "success": {
+                window.location.reload();
+                break;
+            }
+            case "invalidProfilePictureFile": {
+                setMessage("Formato da imagem de perfil não suportado.");
+                setIsShow(true);
+                break;
+            }
+            case "error": {
+                setMessage("Erro desconhecido");
+                setIsShow(true);
+                break;
+            }
+        }
     }
 
     const logout = async () => {

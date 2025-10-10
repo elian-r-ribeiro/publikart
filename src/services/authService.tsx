@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { createPlaylist } from "./PlaylistsService";
 import User from "@/model/User";
 import { FirebaseError } from "firebase/app";
 import { LoginOrRegisterResult } from "@/model/Types";
+import { validateFileType } from "./CommomService";
 
 function getLoggedUserInfoHook() {
   const [loggedUserData, setLoggedUserData] = useState<any>(null);
@@ -67,21 +68,30 @@ const validateIfEmailIsVerifiedWhenSigningIn = async (user: FirebaseUserModel): 
 
 const tryRegisterUser = async (email: string, password: string, userName: string, profilePicture: FileList | null): Promise<LoginOrRegisterResult> => {
   try {
-    const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
 
-    const registeredUser = userCredentials.user;
-    const uid = registeredUser.uid;
-    const profilePictureRef = await uploadFileToFirebase(profilePicture![0], `profilePictures/${uid}`);
-    const profilePictureUrl = await getDownloadURLByRef(profilePictureRef!);
+    let userCredentials;
+    let registeredUser;
+    let uid;
 
-    await handleFirestoreUserDataRegister(uid, userName, profilePictureUrl);
+    const validateProfilePictureFile = validateFileType(profilePicture![0], "image");
+    if (validateProfilePictureFile.status === "validFile") {
+      userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+      registeredUser = userCredentials.user;
+      uid = registeredUser.uid;
+
+      const profilePictureRef = await uploadFileToFirebase(profilePicture![0], `profilePictures/${uid}`);
+      const profilePictureUrl = await getDownloadURLByRef(profilePictureRef!);
+      await handleFirestoreUserDataRegister(uid, userName, profilePictureUrl);
+    } else {
+      return { status: "invalidProfilePictureFile" }
+    }
+
     await createPlaylist(uid, "Músicas Salvas", "https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png", true, "", true);
     await sendValidationEmail(registeredUser);
     await logoutFromFirebase();
     return { status: "success" }
   } catch (error) {
     const err = error as FirebaseError;
-
     return { status: "error", code: err.code };
   }
 

@@ -7,6 +7,7 @@ import DefaultImageInput from "../others/DefaultImageInput";
 import { tryRegisterUser } from "@/services/AuthService";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
+import { ProfileUpdateResult } from "@/model/Types";
 
 export default function RegisterForm() {
 
@@ -33,16 +34,21 @@ export default function RegisterForm() {
         setIsLoading(false);
 
         switch (registerResult.status) {
-            case "success":
+            case "success": {
                 setMessage("Se esse email existir, foi enviado um email de validação. Verifique sua caixa de spam.");
-                setIsShow(true);
                 break;
-
-            case "error":
+            }
+            case "invalidProfilePictureFile": {
+                setMessage("Formato da imagem de perfil não suportado.");
+                break;
+            }
+            case "error": {
                 errorHandling(registerResult.code);
                 break;
+            }
         }
 
+        setIsShow(true);
     };
 
     const errorHandling = (errorCode: string) => {
