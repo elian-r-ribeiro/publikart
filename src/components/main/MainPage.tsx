@@ -1,10 +1,11 @@
 'use client'
 
+import React from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 import SideBar from "./SideBar";
 
-export default function MainPage(props: any) {
+export default function MainPage({children}: {children: React.ReactNode}) {
 
     return (
         <div className="h-screen flex flex-col justify-between">
@@ -14,7 +15,7 @@ export default function MainPage(props: any) {
                     <SideBar isSupposedToBeHiddenOnSmallerScreens={true} areItemsSupposedToBeCentered={false} />
                 </div>
                 <div className="flex-1 backdrop-blur overflow-auto p-5">
-                    <main className="h-full">{props.children}</main>
+                    <main className="h-full">{children}</main>
                 </div>
             </div>
             <Footer />
