@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { usePlayerContext } from "@/context/PlayerContext";
-import { IconPlayerPause, IconPlayerPlay, IconPlayerSkipBack, IconPlayerSkipForward, IconRewindBackward10, IconRewindForward10 } from "@tabler/icons-react";
+import { IconPlayerPause, IconPlayerPlay, IconPlayerSkipBack, IconPlayerSkipForward } from "@tabler/icons-react";
 
 export default function MiniPlayer() {
 

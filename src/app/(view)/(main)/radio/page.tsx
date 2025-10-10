@@ -1,7 +1,7 @@
 export default function Radio() {
     return (
-        <div className="">
-            <span>Radio</span>
+        <div className="centerItems">
+            <span>Em desenvolvimento...</span>
         </div>
     );
 }

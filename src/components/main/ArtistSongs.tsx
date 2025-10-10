@@ -1,4 +1,3 @@
-import { useCurrentUser } from "@/context/UserContext";
 import MiniMusicCard from "../cards/MiniMusicCard";
 import { useEffect, useState } from "react";
 import Song from "@/model/Song";

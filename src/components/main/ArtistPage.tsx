@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import ArtistCard from "../cards/ArtistCard";
-
 import { getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import User from "@/model/User";
 import { useCurrentUser } from "@/context/UserContext";
 import ArtistSongs from "./ArtistSongs";
 import ArtistPlaylists from "./ArtistPlaylists";
-import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 
 interface ArtistPageProps {

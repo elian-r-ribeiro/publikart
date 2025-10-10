@@ -1,4 +1,3 @@
-import { IconArrowsRandom, IconPlayerPlay, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/context/UserContext";
 import Playlist from "@/model/Playlist";
@@ -7,7 +6,6 @@ import Song from "@/model/Song";
 import MiniMusicCard from "../cards/MiniMusicCard";
 import { getArrayOfDocumentsByDocIdsFromFirebase, getSomethingFromFirebaseByDocumentId } from "@/services/FirebaseService";
 import { usePlayerContext } from "@/context/PlayerContext";
-import Loading from "../others/Loading";
 import { useLoading } from "@/context/LoadingContext";
 import PlaylistCard from "../cards/PlaylistCard";
 
