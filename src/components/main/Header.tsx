@@ -18,7 +18,7 @@ export default function Header() {
     }
 
     const goToMobileNavBar = () => {
-        router.push("/mobileSideBar");
+        router.push("/mobileNavBar");
     }
 
     const goToSearchPage = (searchTerm: string) => {
