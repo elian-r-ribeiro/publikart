@@ -5,6 +5,7 @@ import { UserProvider } from "@/context/UserContext";
 import { PlayerProvider } from "@/context/PlayerContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { MessageProvider } from "@/context/MessageContext";
+import { DefaultSongProvider } from "@/context/DefaultSongContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PublikArt",
-  description: "A plataforma para pequenos artistas.",
+  description: "A plataforma de pequenos compositores.",
 };
 
 export default function RootLayout({
@@ -29,15 +30,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <MessageProvider>
-          <LoadingProvider>
-            <UserProvider>
-              <PlayerProvider>
-                {children}
-              </PlayerProvider>
-            </UserProvider>
-          </LoadingProvider>
-        </MessageProvider>
+        <DefaultSongProvider>
+          <MessageProvider>
+            <LoadingProvider>
+              <UserProvider>
+                <PlayerProvider>
+                  {children}
+                </PlayerProvider>
+              </UserProvider>
+            </LoadingProvider>
+          </MessageProvider>
+        </DefaultSongProvider>
       </body>
     </html >
   );

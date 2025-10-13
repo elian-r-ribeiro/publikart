@@ -1,12 +1,11 @@
 'use client'
 
+import { useDefaultSong } from "@/context/DefaultSongContext";
 import { getDefaultSongURL } from "@/services/SongsService";
 import { IconMusic } from "@tabler/icons-react";
-import { useRef, useState } from "react";
 
 export default function DefaultMusicComponent() {
-    const songRef = useRef<HTMLAudioElement | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const { songRef, isPlaying, setIsPlaying } = useDefaultSong();
 
     async function handleDefaultSongPlayAndPause() {
         if (!songRef.current) {
@@ -15,7 +14,7 @@ export default function DefaultMusicComponent() {
             songRef.current.loop = true;
         }
 
-        if (isPlaying) {
+        if (isPlaying === true) {
             songRef.current.pause();
             setIsPlaying(false);
         } else {

@@ -29,7 +29,7 @@ export default function PasswordRecoveryForm() {
 
     return (
         <div className="centerItems h-screen">
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-110 h-80 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-zinc-700/20 w-90 lg:w-110 h-80 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
                 <h1 className="text-2xl font-black mb-4">Recuperar</h1>
                 <div className="centerItems gap-7">
                     <input type="email"

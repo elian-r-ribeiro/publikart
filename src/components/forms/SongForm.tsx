@@ -108,7 +108,7 @@ export default function SongForm(props: SongFormProps) {
     }
 
     return (
-        <div className="bg-zinc-700/20 w-110 h-110 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
+        <div className="bg-zinc-700/20 w-90 lg:w-110 h-110 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur">
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-3 text-center">
                 <DefaultImageInput
                     imageSrc={imageSrc || ""}

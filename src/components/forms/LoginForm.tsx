@@ -7,12 +7,14 @@ import { useRouter } from "next/navigation";
 import DefaultMusicComponent from "../main/DefaultMusicComponent";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
+import { useDefaultSong } from "@/context/DefaultSongContext";
 
 export default function LoginForm() {
 
     const router = useRouter();
     const { setIsLoading, setLoadingMessage } = useLoading();
     const { setIsShow, setMessage } = useMessage();
+    const { songRef, setIsPlaying } = useDefaultSong();
 
     type FormValues = {
         email: string;
@@ -30,6 +32,11 @@ export default function LoginForm() {
         switch (loginResult.status) {
             case "success":
                 router.push("/songs");
+                if (songRef.current != null) {
+                    songRef.current.pause();
+                    songRef.current = null;
+                    setIsPlaying(false);
+                }
                 break;
             case "unverified":
                 setMessage("Email não verificado. Um novo link de verificação foi enviado. Verifique a caixa de spam.");
@@ -57,7 +64,7 @@ export default function LoginForm() {
 
     return (
         <div className="centerItems h-screen">
-            <div className="bg-zinc-700/20 w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur z-1">
+            <div className="bg-zinc-700/20 w-90 lg:w-110 h-130 rounded-2xl overflow-hidden centerItems gap-6 border-2 backdrop-blur z-1">
                 <h1 className="text-2xl font-black mb-4">Login</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="centerItems gap-7">
                     <input type="email"
