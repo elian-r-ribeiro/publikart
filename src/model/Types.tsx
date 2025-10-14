@@ -28,10 +28,16 @@ type ProfileUpdateResult =
     | { status: "notASupporter" }
     | { status: "error"; code: string }
 
+type LoginFormValues = {
+    email: string;
+    password: string;
+}
+
 export type {
     LoginOrRegisterResult,
     SongUploadResult,
     ValidateFileTypeResult,
     ProfileUpdateResult,
-    PlaylistUploadOrUpdateResult
+    PlaylistUploadOrUpdateResult,
+    LoginFormValues
 }

@@ -1,13 +1,14 @@
 'use client'
 
-import { logoutFromFirebase, tryLogin } from "@/services/AuthService";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import DefaultMusicComponent from "../main/DefaultMusicComponent";
+import { loginFormOnSubmit } from "@/controllers/LoginFormController";
 import { useLoading } from "@/context/LoadingContext";
 import { useMessage } from "@/context/MessageContext";
 import { useDefaultSong } from "@/context/DefaultSongContext";
+import { useRouter } from "next/navigation";
+import { LoginFormValues } from "@/model/Types";
 
 export default function LoginForm() {
 
@@ -16,51 +17,11 @@ export default function LoginForm() {
     const { setIsShow, setMessage } = useMessage();
     const { songRef, setIsPlaying } = useDefaultSong();
 
-    type FormValues = {
-        email: string;
-        password: string;
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({ mode: "onBlur" });
+
+    const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
+        loginFormOnSubmit(data, router, songRef, { setIsPlaying, setMessage, setIsShow, setLoadingMessage, setIsLoading });
     };
-
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ mode: "onBlur" });
-
-    const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        setLoadingMessage("Logando...");
-        setIsLoading(true);
-        const loginResult = await tryLogin(data.email, data.password);
-        setIsLoading(false);
-
-        switch (loginResult.status) {
-            case "success":
-                router.push("/songs");
-                if (songRef.current != null) {
-                    songRef.current.pause();
-                    songRef.current = null;
-                    setIsPlaying(false);
-                }
-                break;
-            case "unverified":
-                setMessage("Email não verificado. Um novo link de verificação foi enviado. Verifique a caixa de spam.");
-                setIsShow(true);
-                logoutFromFirebase();
-                break;
-            case "error":
-                errorHandling(loginResult.code);
-                break;
-        }
-    };
-
-    const errorHandling = (errorCode: string) => {
-
-        switch (errorCode) {
-            case "auth/invalid-credential":
-                setMessage("Email ou(e) senha inválido(s).");
-                break;
-            case "auth/too-many-requests":
-                setMessage("Muitas requisições em pouco tempo. Tente novamente mais tarde.");
-                break;
-        }
-        setIsShow(true);
-    }
 
     return (
         <div className="centerItems h-screen">

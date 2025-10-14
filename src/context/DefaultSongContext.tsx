@@ -1,17 +1,19 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, SetStateAction, useContext, useRef, useState } from "react";
 
-const DefaultSongContext = createContext<any>(null);
+type DefaultSongContextType = {
+    setIsPlaying: React.Dispatch<SetStateAction<boolean>>;
+    isPlaying: boolean;
+    songRef: React.RefObject<HTMLAudioElement | null>;
+}
+
+const DefaultSongContext = createContext<DefaultSongContextType | null>(null);
 
 export function DefaultSongProvider({ children }: { children: React.ReactNode }) {
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const songRef = useRef<HTMLAudioElement | null>(null);
-
-    useEffect(() => {
-
-    }, [songRef])
 
     return (
         <DefaultSongContext.Provider value={{ setIsPlaying, isPlaying, songRef }}>
@@ -20,6 +22,12 @@ export function DefaultSongProvider({ children }: { children: React.ReactNode })
     );
 }
 
-export function useDefaultSong() {
-    return useContext(DefaultSongContext);
+export function useDefaultSong(): DefaultSongContextType {
+    const context = useContext(DefaultSongContext);
+
+    if (!context) {
+        throw new Error("useDefaultSong deve ser usado dentro de um DefaultSongProvider");
+    }
+
+    return context;
 }
